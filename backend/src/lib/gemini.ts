@@ -30,8 +30,20 @@ export async function urlToBase64(url: string): Promise<string> {
   return base64;
 }
 
+// Retry configuration
+const MAX_RETRIES = 3;
+const RETRY_DELAY_MS = 2000; // 2 seconds base delay
+const RETRYABLE_STATUS_CODES = [429, 500, 502, 503, 504];
+
 /**
- * Generate image using Gemini 3 Pro Image API
+ * Sleep helper for retry delays
+ */
+function sleep(ms: number): Promise<void> {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+/**
+ * Generate image using Gemini 3 Pro Image API with retry logic
  */
 export async function generateImage(options: GenerateImageOptions): Promise<GenerateImageResult | null> {
   const apiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY;
@@ -84,39 +96,73 @@ export async function generateImage(options: GenerateImageOptions): Promise<Gene
 
   const url = `${API_BASE_URL}/models/${MODEL}:generateContent?key=${apiKey}`;
 
-  try {
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(requestBody)
-    });
+  // Retry loop
+  for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      console.log(`[Gemini] Attempt ${attempt}/${MAX_RETRIES}...`);
+      
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(requestBody)
+      });
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error(`Gemini API error ${response.status}:`, errorText.slice(0, 500));
-      return null;
-    }
+      // Check if we should retry
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error(`[Gemini] API error ${response.status}:`, errorText.slice(0, 300));
+        
+        // Retry on transient errors
+        if (RETRYABLE_STATUS_CODES.includes(response.status) && attempt < MAX_RETRIES) {
+          const delay = RETRY_DELAY_MS * attempt; // Exponential backoff
+          console.log(`[Gemini] Retrying in ${delay}ms...`);
+          await sleep(delay);
+          continue;
+        }
+        
+        return null;
+      }
 
-    const result = await response.json();
+      const result = await response.json();
 
-    // Extract image from response
-    if (result.candidates?.[0]?.content?.parts) {
-      for (const part of result.candidates[0].content.parts) {
-        if (part.inlineData?.data) {
-          return {
-            imageBase64: part.inlineData.data,
-            mimeType: part.inlineData.mimeType || 'image/png'
-          };
+      // Extract image from response
+      if (result.candidates?.[0]?.content?.parts) {
+        for (const part of result.candidates[0].content.parts) {
+          if (part.inlineData?.data) {
+            console.log(`[Gemini] Success on attempt ${attempt}`);
+            return {
+              imageBase64: part.inlineData.data,
+              mimeType: part.inlineData.mimeType || 'image/png'
+            };
+          }
         }
       }
-    }
 
-    console.error("No image in Gemini response");
-    return null;
-  } catch (error) {
-    console.error("Gemini API exception:", error);
-    return null;
+      // No image in response - retry
+      console.error("[Gemini] No image in response");
+      if (attempt < MAX_RETRIES) {
+        const delay = RETRY_DELAY_MS * attempt;
+        console.log(`[Gemini] Retrying in ${delay}ms...`);
+        await sleep(delay);
+        continue;
+      }
+      
+      return null;
+    } catch (error) {
+      console.error(`[Gemini] Exception on attempt ${attempt}:`, error);
+      
+      if (attempt < MAX_RETRIES) {
+        const delay = RETRY_DELAY_MS * attempt;
+        console.log(`[Gemini] Retrying in ${delay}ms...`);
+        await sleep(delay);
+        continue;
+      }
+      
+      return null;
+    }
   }
+  
+  return null;
 }
 
 /**
