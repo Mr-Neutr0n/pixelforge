@@ -555,28 +555,24 @@ export default function Home() {
   const anyGenerating = Object.values(store.generatingSprites).some(v => v);
   const allSpritesExist = Object.values(store.spriteSheets).every(v => v !== null);
 
-  // Proceed to preview without regenerating (extracts frames if needed)
+  // Proceed to preview - ALWAYS re-extract frames to ensure they match current sprites
   const proceedToPreview = async () => {
-    // Check if frames need to be extracted (they might already exist)
-    const hasFrames = store.walkFrames.length > 0;
+    store.setLoading(true);
+    store.setLoadingMessage("Preparing preview...");
     
-    if (!hasFrames) {
-      store.setLoading(true);
-      store.setLoadingMessage("Extracting animation frames...");
-      
-      const types: SpriteType[] = ["walk", "jump", "attack", "idle"];
-      for (const type of types) {
-        const sheet = store.spriteSheets[type];
-        if (sheet) {
-          const frames = await extractFramesFromSheet(sheet.imageUrl, 2, 2);
-          store.setFrames(type, frames);
-        }
+    // Always re-extract frames from current sprite sheets
+    // This ensures frames are never stale after regeneration
+    const types: SpriteType[] = ["walk", "jump", "attack", "idle"];
+    for (const type of types) {
+      const sheet = store.spriteSheets[type];
+      if (sheet) {
+        const frames = await extractFramesFromSheet(sheet.imageUrl, 2, 2);
+        store.setFrames(type, frames);
       }
-      
-      store.setLoading(false);
-      store.setLoadingMessage("");
     }
     
+    store.setLoading(false);
+    store.setLoadingMessage("");
     store.setMaxCompletedStep(2);
     store.setStep(3);
   };
