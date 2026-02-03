@@ -116,9 +116,10 @@ app.use((err: Error, req: express.Request, res: express.Response, next: express.
   res.status(500).json({ error: 'Internal server error' });
 });
 
-// Start server
-app.listen(PORT, () => {
+// Start server - bind to 0.0.0.0 explicitly for Railway
+app.listen(Number(PORT), '0.0.0.0', () => {
   console.log(`🎮 PixelForge API running on port ${PORT}`);
+  console.log(`   Bound to: 0.0.0.0:${PORT}`);
   console.log(`   Health check: http://localhost:${PORT}/health`);
   console.log(`   Rate limit: ${DAILY_LIMIT} generations/day`);
 });
