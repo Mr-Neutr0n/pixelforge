@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   description: "Create retro pixel game characters with AI. Describe your hero, generate sprite sheets, preview animations, and export game-ready assets.",
   keywords: ["pixel art", "sprite generator", "retro games", "AI game creator", "pixel character", "sprite sheet", "8-bit", "game assets"],
   authors: [{ name: "PixelForge" }],
-  metadataBase: new URL("https://pixelforge.app"),
+  metadataBase: new URL("https://pixelforge.harikp.com"),
   openGraph: {
     title: "PixelForge — AI Pixel Art Game Creator",
     description: "Describe your hero. Get walk, jump, attack & idle sprite sheets. Play in a live sandbox. Export game-ready assets.",
