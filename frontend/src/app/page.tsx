@@ -603,9 +603,7 @@ export default function Home() {
       <header className="sticky top-0 z-50 border-b border-[#3a4466] bg-[#181425]/90 backdrop-blur-md">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
           <div className="flex items-center gap-2 sm:gap-3">
-            <div className="w-7 h-7 sm:w-8 sm:h-8 bg-[#feae34] flex items-center justify-center flex-shrink-0">
-              <span className="text-[#181425] font-bold" style={{ fontFamily: "'Press Start 2P', cursive", fontSize: '7px' }}>PF</span>
-            </div>
+            <img src="/logo.png" alt="PixelForge" className="w-7 h-7 sm:w-8 sm:h-8 pixel-art flex-shrink-0" />
             <span className="text-xs sm:text-sm font-semibold tracking-wide">PIXELFORGE</span>
           </div>
           <div className="flex items-center gap-2 sm:gap-3">
