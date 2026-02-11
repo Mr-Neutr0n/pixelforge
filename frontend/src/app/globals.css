@@ -406,13 +406,14 @@ body {
 
 /* Mobile touch controls */
 .touch-btn {
-  width: 48px;
-  height: 48px;
-  border-radius: 10px;
+  width: 52px;
+  height: 52px;
+  min-width: 52px;
+  min-height: 52px;
+  border-radius: 12px;
   background: var(--bg-elevated);
-  border: 1px solid var(--border-default);
+  border: 2px solid var(--border-default);
   color: var(--text-secondary);
-  font-size: 18px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -420,7 +421,8 @@ body {
   user-select: none;
   -webkit-user-select: none;
   touch-action: manipulation;
-  transition: background 0.1s, border-color 0.1s;
+  -webkit-touch-callout: none;
+  transition: background 0.05s, border-color 0.05s, color 0.05s;
 }
 
 .touch-btn:active {
@@ -431,11 +433,13 @@ body {
 
 .touch-btn-action:active {
   background: var(--success);
+  color: var(--bg-void);
   border-color: var(--success);
 }
 
 .touch-btn-attack:active {
   background: var(--error);
+  color: var(--bg-void);
   border-color: var(--error);
 }
 

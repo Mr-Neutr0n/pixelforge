@@ -368,9 +368,8 @@ export default function PixiSandbox({ walkFrames, jumpFrames, attackFrames, idle
     };
   }, [walkFrames, gameLoop]);
 
-  // Touch control handlers
-  const handleTouchStart = (action: string) => (e: React.TouchEvent) => {
-    e.preventDefault();
+  // Pointer handlers (work for both touch and mouse)
+  const handleDown = (action: string) => {
     if (action === "left" || action === "right") {
       keysPressed.current.add(action);
     } else if (action === "jump") {
@@ -389,52 +388,38 @@ export default function PixiSandbox({ walkFrames, jumpFrames, attackFrames, idle
     }
   };
 
-  const handleTouchEnd = (action: string) => (e: React.TouchEvent) => {
-    e.preventDefault();
+  const handleUp = (action: string) => {
     if (action === "left" || action === "right") {
       keysPressed.current.delete(action);
     }
   };
+
+  const btnProps = (action: string) => ({
+    onPointerDown: (e: React.PointerEvent) => { e.preventDefault(); handleDown(action); },
+    onPointerUp: (e: React.PointerEvent) => { e.preventDefault(); handleUp(action); },
+    onPointerLeave: (e: React.PointerEvent) => { e.preventDefault(); handleUp(action); },
+    onContextMenu: (e: React.MouseEvent) => e.preventDefault(),
+  });
 
   return (
     <div className="pixi-sandbox-container">
       <div ref={containerRef} className="pixi-canvas-wrapper" />
       {/* Mobile touch controls */}
       <div className="flex sm:hidden items-center justify-between px-2 pt-3 pb-1 select-none">
-        <div className="flex gap-2">
-          <button
-            onTouchStart={handleTouchStart("left")}
-            onTouchEnd={handleTouchEnd("left")}
-            className="touch-btn"
-            aria-label="Move left"
-          >
-            ◄
+        <div className="flex gap-3">
+          <button {...btnProps("left")} className="touch-btn" aria-label="Move left">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M15 19l-7-7 7-7"/></svg>
           </button>
-          <button
-            onTouchStart={handleTouchStart("right")}
-            onTouchEnd={handleTouchEnd("right")}
-            className="touch-btn"
-            aria-label="Move right"
-          >
-            ►
+          <button {...btnProps("right")} className="touch-btn" aria-label="Move right">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M9 5l7 7-7 7"/></svg>
           </button>
         </div>
-        <div className="flex gap-2">
-          <button
-            onTouchStart={handleTouchStart("jump")}
-            onTouchEnd={handleTouchEnd("jump")}
-            className="touch-btn touch-btn-action"
-            aria-label="Jump"
-          >
-            ▲
+        <div className="flex gap-3">
+          <button {...btnProps("jump")} className="touch-btn touch-btn-action" aria-label="Jump">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M5 15l7-7 7 7"/></svg>
           </button>
-          <button
-            onTouchStart={handleTouchStart("attack")}
-            onTouchEnd={handleTouchEnd("attack")}
-            className="touch-btn touch-btn-attack"
-            aria-label="Attack"
-          >
-            ⚔
+          <button {...btnProps("attack")} className="touch-btn touch-btn-attack" aria-label="Attack">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M4 20L20 4M14 4h6v6"/></svg>
           </button>
         </div>
       </div>
