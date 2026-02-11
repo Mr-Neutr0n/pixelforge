@@ -1,16 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
-});
-
-const jetbrainsMono = JetBrains_Mono({
-  variable: "--font-jetbrains",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: "PixelForge | AI-Powered Retro Game Creator",
@@ -30,16 +19,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en" className="dark" style={{ background: '#181425' }}>
       <head>
         <link
           href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
           rel="stylesheet"
         />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&display=swap"
+          rel="stylesheet"
+        />
+        <link rel="icon" href="/favicon.ico" />
       </head>
-      <body
-        className={`${inter.variable} ${jetbrainsMono.variable} antialiased bg-grid`}
-      >
+      <body className="antialiased bg-grid">
         {children}
       </body>
     </html>

@@ -83,13 +83,13 @@ function Toast() {
   if (!toast) return null;
   
   const bgColor = {
-    success: 'bg-[#00ff88]',
-    error: 'bg-[#ff4466]',
-    info: 'bg-[#00fff5]'
+    success: 'bg-[#63c74d]',
+    error: 'bg-[#e43b44]',
+    info: 'bg-[#feae34]'
   }[toast.type];
-  
+
   return (
-    <div className={`fixed top-20 right-6 z-[100] ${bgColor} text-[#050508] px-4 py-3 rounded-lg shadow-lg flex items-center gap-3 animate-fade-up`}>
+    <div className={`fixed top-20 right-6 z-[100] ${bgColor} text-[#181425] px-4 py-3 rounded-lg shadow-lg flex items-center gap-3 animate-fade-up`}>
       <span className="text-sm font-medium">{toast.message}</span>
       <button onClick={clearToast} className="opacity-60 hover:opacity-100">✕</button>
     </div>
@@ -125,14 +125,14 @@ function StepIndicator({ currentStep, maxCompletedStep, onStepClick }: {
                 className={`pixel-step ${isActive ? 'active' : ''} ${isCompleted ? 'completed' : ''}`}
               />
               <span className={`text-[10px] uppercase tracking-wider ${
-                isActive ? 'text-accent' : isCompleted ? 'text-[#00ff88]' : 'text-[#505068]'
+                isActive ? 'text-accent' : isCompleted ? 'text-[#63c74d]' : 'text-[#5a6988]'
               }`}>
                 {label}
               </span>
             </button>
             {idx < steps.length - 1 && (
               <div className={`w-8 h-[2px] ${
-                isCompleted && idx < maxCompletedStep ? 'bg-[#00ff88]' : 'bg-[#1a1a28]'
+                isCompleted && idx < maxCompletedStep ? 'bg-[#63c74d]' : 'bg-[#3a4466]'
               }`} />
             )}
           </div>
@@ -163,23 +163,23 @@ function EditModal({
   // If loading, show loading state
   if (isLoading) {
     return (
-      <div className="fixed inset-0 bg-[#050508]/90 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      <div className="fixed inset-0 bg-[#181425]/90 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div className="glass-card p-8 w-full max-w-md animate-fade-up text-center">
           <div className="spinner mx-auto mb-4" />
           <h3 className="text-lg font-bold text-accent mb-2">Applying Edit...</h3>
-          <p className="text-[#8888a0] text-sm">Gemini is processing your changes</p>
-          <p className="text-[#505068] text-xs mt-2">This may take 15-30 seconds</p>
+          <p className="text-[#8b9bb4] text-sm">Gemini is processing your changes</p>
+          <p className="text-[#5a6988] text-xs mt-2">This may take 15-30 seconds</p>
         </div>
       </div>
     );
   }
   
   return (
-    <div className="fixed inset-0 bg-[#050508]/90 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 bg-[#181425]/90 backdrop-blur-sm z-50 flex items-center justify-center p-4">
       <div className="glass-card p-6 w-full max-w-md animate-fade-up">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-bold text-accent">{title}</h3>
-          <button onClick={onClose} className="text-[#8888a0] hover:text-white">✕</button>
+          <button onClick={onClose} className="text-[#8b9bb4] hover:text-[#ead4aa]">✕</button>
         </div>
         <textarea
           value={editPrompt}
@@ -216,19 +216,19 @@ function SpriteCard({ type, isGenerating, onRegenerate, onEdit }: {
   return (
     <div className="glass-card p-4 relative group">
       <div className="flex items-center justify-between mb-2">
-        <span className="text-[10px] uppercase tracking-wider text-[#505068]">{type}</span>
+        <span className="text-[10px] uppercase tracking-wider text-[#5a6988]">{type}</span>
         {sheet && !isGenerating && (
           <div className="opacity-0 group-hover:opacity-100 transition-opacity flex gap-2">
             <button
               onClick={onEdit}
-              className="text-[10px] text-[#8888a0] hover:text-accent"
+              className="text-[10px] text-[#8b9bb4] hover:text-accent"
               title="Edit this sprite"
             >
               ✎
             </button>
             <button
               onClick={onRegenerate}
-              className="text-[10px] text-[#8888a0] hover:text-accent"
+              className="text-[10px] text-[#8b9bb4] hover:text-accent"
               title="Regenerate this sprite"
             >
               ↻
@@ -238,12 +238,12 @@ function SpriteCard({ type, isGenerating, onRegenerate, onEdit }: {
       </div>
       
       {isGenerating ? (
-        <div className="aspect-square bg-[#0a0a0f] rounded-lg flex flex-col items-center justify-center gap-2">
+        <div className="aspect-square bg-[#1a1a2e] rounded-lg flex flex-col items-center justify-center gap-2">
           <div className="spinner w-6 h-6" />
           <span className="text-[10px] text-accent">Generating...</span>
         </div>
       ) : sheet ? (
-        <div className="bg-[#0a0a0f] rounded-lg overflow-hidden relative">
+        <div className="bg-[#1a1a2e] rounded-lg overflow-hidden relative">
           <img
             src={showRawImages && sheet.rawImageUrl ? sheet.rawImageUrl : sheet.imageUrl}
             alt={type}
@@ -251,8 +251,8 @@ function SpriteCard({ type, isGenerating, onRegenerate, onEdit }: {
           />
         </div>
       ) : (
-        <div className="aspect-square bg-[#0a0a0f] rounded-lg flex items-center justify-center">
-          <span className="text-[#505068] text-xs">Pending</span>
+        <div className="aspect-square bg-[#1a1a2e] rounded-lg flex items-center justify-center">
+          <span className="text-[#5a6988] text-xs">Pending</span>
         </div>
       )}
     </div>
@@ -600,11 +600,11 @@ export default function Home() {
       />
       
       {/* Header */}
-      <header className="sticky top-0 z-50 border-b border-[#1a1a28] bg-[#050508]/90 backdrop-blur-md">
+      <header className="sticky top-0 z-50 border-b border-[#3a4466] bg-[#181425]/90 backdrop-blur-md">
         <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-[#00fff5] flex items-center justify-center">
-              <span className="text-[#050508] text-sm font-bold">PF</span>
+            <div className="w-8 h-8 bg-[#feae34] flex items-center justify-center">
+              <span className="text-[#181425] text-sm font-bold" style={{ fontFamily: "'Press Start 2P', cursive", fontSize: '8px' }}>PF</span>
             </div>
             <span className="text-sm font-semibold tracking-wide">PIXELFORGE</span>
           </div>
@@ -642,22 +642,22 @@ export default function Home() {
 
         {/* Loading Overlay */}
         {store.isLoading && (
-          <div className="fixed inset-0 bg-[#050508]/90 backdrop-blur-sm z-50 flex items-center justify-center">
+          <div className="fixed inset-0 bg-[#181425]/90 backdrop-blur-sm z-50 flex items-center justify-center">
             <div className="glass-card p-10 text-center animate-fade-up">
               <div className="spinner mx-auto mb-6" />
               <p className="text-accent font-medium mb-2">{store.loadingMessage}</p>
-              <p className="text-[#505068] text-xs">This may take up to 30 seconds</p>
+              <p className="text-[#5a6988] text-xs">This may take up to 30 seconds</p>
             </div>
           </div>
         )}
 
         {/* Error Display */}
         {store.error && (
-          <div className="max-w-xl mx-auto mb-8 glass-card p-4 border-[#ff4466]/30 bg-[#ff4466]/5">
+          <div className="max-w-xl mx-auto mb-8 glass-card p-4 border-[#e43b44]/30 bg-[#e43b44]/5">
             <div className="flex items-center gap-3">
-              <span className="text-[#ff4466]">⚠</span>
-              <p className="text-sm text-[#ff4466] flex-1">{store.error}</p>
-              <button onClick={store.clearError} className="text-[#ff4466]/60 hover:text-[#ff4466]">✕</button>
+              <span className="text-[#e43b44]">⚠</span>
+              <p className="text-sm text-[#e43b44] flex-1">{store.error}</p>
+              <button onClick={store.clearError} className="text-[#e43b44]/60 hover:text-[#e43b44]">✕</button>
             </div>
           </div>
         )}
@@ -670,7 +670,7 @@ export default function Home() {
               <h2 className="text-2xl font-bold text-glow mb-3">
                 Create Your Character
               </h2>
-              <p className="text-[#8888a0] text-sm">
+              <p className="text-[#8b9bb4] text-sm">
                 Describe your pixel hero or attach a reference image
               </p>
             </div>
@@ -683,15 +683,15 @@ export default function Home() {
                     value={store.characterPrompt}
                     onChange={(e) => store.setCharacterPrompt(e.target.value)}
                     placeholder="A brave robot warrior with glowing blue eyes and silver armor..."
-                    className="input-arcade h-32 resize-none pr-14"
+                    className="input-arcade h-32 resize-none pr-16"
                   />
                   {/* Attachment button */}
                   <button
                     onClick={() => fileInputRef.current?.click()}
                     className={`absolute right-3 top-3 w-10 h-10 rounded-lg flex items-center justify-center transition-all ${
-                      uploadedImage 
-                        ? 'bg-[#00fff5] text-[#050508]' 
-                        : 'bg-[#14141f] text-[#8888a0] hover:text-accent hover:bg-[#1a1a28]'
+                      uploadedImage
+                        ? 'bg-[#feae34] text-[#181425]'
+                        : 'bg-[#2d2d44] text-[#8b9bb4] hover:text-accent hover:bg-[#3a4466]'
                     }`}
                     title={uploadedImage ? "Image attached - click to change" : "Attach reference image"}
                   >
@@ -710,15 +710,15 @@ export default function Home() {
                 
                 {/* Show attached image preview */}
                 {uploadedImage && (
-                  <div className="mt-3 flex items-center gap-3 p-3 bg-[#14141f] rounded-lg border border-[#1a1a28]">
+                  <div className="mt-3 flex items-center gap-3 p-3 bg-[#2d2d44] rounded-lg border border-[#3a4466]">
                     <img src={uploadedImage} alt="Attached" className="w-16 h-16 object-cover rounded-lg pixel-art" />
                     <div className="flex-1">
-                      <p className="text-sm text-[#f0f0f5]">Reference image attached</p>
-                      <p className="text-xs text-[#505068]">Will be converted to pixel art</p>
+                      <p className="text-sm text-[#ead4aa]">Reference image attached</p>
+                      <p className="text-xs text-[#5a6988]">Will be converted to pixel art</p>
                     </div>
                     <button
                       onClick={() => setUploadedImage(null)}
-                      className="text-[#8888a0] hover:text-[#ff4466] p-2"
+                      className="text-[#8b9bb4] hover:text-[#e43b44] p-2 transition-colors"
                       title="Remove image"
                     >
                       ✕
@@ -748,7 +748,7 @@ export default function Home() {
               <h2 className="text-2xl font-bold text-glow mb-3">
                 Generate Animations
               </h2>
-              <p className="text-[#8888a0] text-sm">
+              <p className="text-[#8b9bb4] text-sm">
                 Create walk, jump, attack, and idle sprite sheets
               </p>
             </div>
@@ -758,14 +758,14 @@ export default function Home() {
               <div className="glass-card p-6 animate-fade-up delay-1 group">
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-[#00fff5]" />
-                    <span className="text-xs uppercase tracking-wider text-[#8888a0]">Your Character</span>
+                    <div className="w-2 h-2 bg-[#feae34]" />
+                    <span className="text-xs uppercase tracking-wider text-[#8b9bb4]">Your Character</span>
                   </div>
                   <div className="flex items-center gap-2">
                     {store.characterImage && (
                       <button
                         onClick={() => setIsEditingCharacter(true)}
-                        className="opacity-0 group-hover:opacity-100 transition-opacity text-[10px] px-2 py-1 rounded bg-[#14141f] text-[#8888a0] hover:text-accent"
+                        className="opacity-0 group-hover:opacity-100 transition-opacity text-[10px] px-2 py-1 rounded bg-[#2d2d44] text-[#8b9bb4] hover:text-accent"
                       >
                         ✎ Edit
                       </button>
@@ -774,9 +774,9 @@ export default function Home() {
                       <button
                         onClick={() => store.setShowRawImages(!store.showRawImages)}
                         className={`text-[10px] px-2 py-1 rounded ${
-                          store.showRawImages 
-                            ? 'bg-[#00fff5] text-[#050508]' 
-                            : 'bg-[#14141f] text-[#8888a0]'
+                          store.showRawImages
+                            ? 'bg-[#feae34] text-[#181425]'
+                            : 'bg-[#2d2d44] text-[#8b9bb4]'
                         }`}
                       >
                         {store.showRawImages ? 'Raw' : 'Clean'}
@@ -785,7 +785,7 @@ export default function Home() {
                   </div>
                 </div>
                 {store.characterImage && (
-                  <div className="bg-[#0a0a0f] rounded-lg p-4 flex items-center justify-center">
+                  <div className="bg-[#1a1a2e] rounded-lg p-4 flex items-center justify-center">
                     <img
                       src={store.showRawImages && store.characterImage.rawImageUrl 
                         ? store.characterImage.rawImageUrl 
@@ -823,10 +823,10 @@ export default function Home() {
                           key={type}
                           className={`text-xs px-2 py-1 rounded ${
                             store.generatingSprites[type]
-                              ? 'bg-[#00fff5]/20 text-accent animate-pulse'
+                              ? 'bg-[#feae34]/20 text-accent animate-pulse'
                               : store.spriteSheets[type]
-                              ? 'bg-[#00ff88]/20 text-[#00ff88]'
-                              : 'bg-[#14141f] text-[#505068]'
+                              ? 'bg-[#63c74d]/20 text-[#63c74d]'
+                              : 'bg-[#2d2d44] text-[#5a6988]'
                           }`}
                         >
                           {type}
@@ -873,7 +873,7 @@ export default function Home() {
               <h2 className="text-2xl font-bold text-glow mb-3">
                 Preview & Adjust
               </h2>
-              <p className="text-[#8888a0] text-sm">
+              <p className="text-[#8b9bb4] text-sm">
                 Test animations and fine-tune settings
               </p>
             </div>
@@ -889,8 +889,8 @@ export default function Home() {
                         onClick={() => { setPreviewType(type); setPreviewFrame(0); setIsPlaying(true); }}
                         className={`px-3 py-1.5 text-xs uppercase tracking-wider rounded transition-all ${
                           previewType === type
-                            ? "bg-[#00fff5] text-[#050508] font-semibold"
-                            : "bg-[#14141f] text-[#8888a0] hover:text-[#f0f0f5]"
+                            ? "bg-[#feae34] text-[#181425] font-semibold"
+                            : "bg-[#2d2d44] text-[#8b9bb4] hover:text-[#ead4aa]"
                         }`}
                       >
                         {type}
@@ -900,16 +900,16 @@ export default function Home() {
                   <button
                     onClick={() => setIsPlaying(!isPlaying)}
                     className={`px-4 py-1.5 text-xs font-semibold rounded ${
-                      isPlaying 
-                        ? 'bg-[#ff4466] text-white' 
-                        : 'bg-[#00fff5] text-[#050508]'
+                      isPlaying
+                        ? 'bg-[#e43b44] text-white'
+                        : 'bg-[#feae34] text-[#181425]'
                     }`}
                   >
                     {isPlaying ? "■ Stop" : "▶ Play"}
                   </button>
                 </div>
 
-                <div className="game-preview scanlines aspect-video flex items-center justify-center">
+                <div className="game-preview aspect-video flex items-center justify-center">
                   {getCurrentFrames()[previewFrame] && (
                     <img
                       src={getCurrentFrames()[previewFrame].dataUrl}
@@ -927,14 +927,14 @@ export default function Home() {
                         key={idx}
                         onClick={() => { setPreviewFrame(idx); setIsPlaying(false); }}
                         className={`flex-1 h-2 rounded-sm transition-all ${
-                          previewFrame === idx 
-                            ? 'bg-[#00fff5]' 
-                            : 'bg-[#1a1a28] hover:bg-[#252535]'
+                          previewFrame === idx
+                            ? 'bg-[#feae34]'
+                            : 'bg-[#3a4466] hover:bg-[#4a5580]'
                         }`}
                       />
                     ))}
                   </div>
-                  <span className="text-[#505068] text-xs whitespace-nowrap">
+                  <span className="text-[#5a6988] text-xs whitespace-nowrap">
                     {previewFrame + 1}/{getCurrentFrames().length}
                   </span>
                 </div>
@@ -945,7 +945,7 @@ export default function Home() {
                 {/* FPS control */}
                 <div className="mb-6">
                   <div className="flex items-center justify-between mb-3">
-                    <span className="text-xs uppercase tracking-wider text-[#8888a0]">Speed</span>
+                    <span className="text-xs uppercase tracking-wider text-[#8b9bb4]">Speed</span>
                     <span className="text-accent font-bold text-lg">{store.fps} FPS</span>
                   </div>
                   <input
@@ -954,17 +954,17 @@ export default function Home() {
                     max="24"
                     value={store.fps}
                     onChange={(e) => store.setFps(parseInt(e.target.value))}
-                    className="w-full h-2 bg-[#14141f] rounded-full appearance-none cursor-pointer accent-[#00fff5]"
+                    className="w-full h-2 bg-[#2d2d44] rounded-full appearance-none cursor-pointer accent-[#feae34]"
                   />
-                  <div className="flex justify-between text-[10px] text-[#505068] mt-2">
+                  <div className="flex justify-between text-[10px] text-[#5a6988] mt-2">
                     <span>Slow</span>
                     <span>Fast</span>
                   </div>
                 </div>
 
                 {/* Frame counts */}
-                <div className="pt-6 border-t border-[#1a1a28] mb-6">
-                  <span className="text-xs uppercase tracking-wider text-[#8888a0] block mb-4">Frames</span>
+                <div className="pt-6 border-t border-[#3a4466] mb-6">
+                  <span className="text-xs uppercase tracking-wider text-[#8b9bb4] block mb-4">Frames</span>
                   <div className="grid grid-cols-2 gap-3">
                     {(["walk", "jump", "attack", "idle"] as SpriteType[]).map((type) => {
                       const frames = store[`${type}Frames`] as Frame[];
@@ -973,12 +973,12 @@ export default function Home() {
                           key={type} 
                           onClick={() => { setPreviewType(type); setPreviewFrame(0); setIsPlaying(true); }}
                           className={`p-3 rounded cursor-pointer transition-all ${
-                            previewType === type 
-                              ? 'bg-[#00fff5]/10 border border-[#00fff5]/30' 
-                              : 'bg-[#14141f] hover:bg-[#1a1a28]'
+                            previewType === type
+                              ? 'bg-[#feae34]/10 border border-[#feae34]/30'
+                              : 'bg-[#2d2d44] hover:bg-[#3a4466]'
                           }`}
                         >
-                          <span className="text-[10px] uppercase tracking-wider text-[#505068] block">{type}</span>
+                          <span className="text-[10px] uppercase tracking-wider text-[#5a6988] block">{type}</span>
                           <span className="text-xl font-bold text-accent">{frames.length}</span>
                         </div>
                       );
@@ -987,8 +987,8 @@ export default function Home() {
                 </div>
 
                 {/* Quick tip */}
-                <div className="text-[10px] text-[#505068] bg-[#14141f] rounded p-3">
-                  <strong className="text-[#8888a0]">Tip:</strong> Click frame bars below the preview to scrub through animation
+                <div className="text-[10px] text-[#5a6988] bg-[#2d2d44] rounded p-3">
+                  <strong className="text-[#8b9bb4]">Tip:</strong> Click frame bars below the preview to scrub through animation
                 </div>
               </div>
             </div>
@@ -999,7 +999,7 @@ export default function Home() {
               </button>
               <button 
                 onClick={() => { store.setMaxCompletedStep(3); store.setStep(4); }} 
-                className="btn-arcade flex-1 animate-pulse-glow"
+                className="btn-arcade flex-1"
               >
                 Launch Sandbox
               </button>
@@ -1015,7 +1015,7 @@ export default function Home() {
               <h2 className="text-2xl font-bold text-glow mb-3">
                 Play Your Character
               </h2>
-              <p className="text-[#8888a0] text-sm">
+              <p className="text-[#8b9bb4] text-sm">
                 <span className="kbd">A</span> <span className="kbd">D</span> Move
                 <span className="mx-3">·</span>
                 <span className="kbd">W</span> Jump
@@ -1025,7 +1025,7 @@ export default function Home() {
             </div>
 
             <div className="glass-card p-4 mb-8 animate-fade-up delay-1">
-              <div className="game-preview scanlines rounded-lg overflow-hidden">
+              <div className="game-preview rounded-lg overflow-hidden">
                 <PixiSandbox
                   walkFrames={store.walkFrames}
                   jumpFrames={store.jumpFrames}
@@ -1057,9 +1057,9 @@ export default function Home() {
       </main>
 
       {/* Footer */}
-      <footer className="relative z-10 border-t border-[#1a1a28] mt-20">
+      <footer className="relative z-10 border-t border-[#3a4466] mt-20">
         <div className="max-w-5xl mx-auto px-6 py-6 text-center">
-          <p className="text-[#505068] text-xs">
+          <p className="text-[#5a6988] text-xs">
             Powered by Gemini 3 Pro · Built with Next.js
           </p>
         </div>

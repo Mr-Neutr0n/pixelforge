@@ -1,50 +1,50 @@
 /* Fonts - must come first */
-@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&display=swap');
 
 @import "tailwindcss";
 
-/* PixelForge - Arcade Cabinet Aesthetic */
+/* PixelForge - Adventure Navy Theme */
 
 :root {
-  /* Core palette - Deep Space */
-  --bg-void: #050508;
-  --bg-primary: #0a0a0f;
-  --bg-secondary: #0f0f16;
-  --bg-elevated: #14141f;
-  --bg-glass: rgba(14, 14, 22, 0.7);
-  
-  /* Single neon accent - Electric Cyan */
-  --accent: #00fff5;
-  --accent-dim: #00cccc;
-  --accent-glow: rgba(0, 255, 245, 0.15);
-  --accent-subtle: rgba(0, 255, 245, 0.05);
-  
-  /* Secondary accent (use sparingly) */
-  --warning: #ffaa00;
-  --success: #00ff88;
-  --error: #ff4466;
-  
+  /* Core palette - Deep Navy */
+  --bg-void: #181425;
+  --bg-primary: #1a1a2e;
+  --bg-secondary: #262b44;
+  --bg-elevated: #2d2d44;
+  --bg-glass: rgba(26, 26, 46, 0.85);
+
+  /* Primary accent - Golden Amber */
+  --accent: #feae34;
+  --accent-dim: #d3a068;
+  --accent-glow: rgba(254, 174, 52, 0.15);
+  --accent-subtle: rgba(254, 174, 52, 0.06);
+
+  /* Status colors */
+  --warning: #f77622;
+  --success: #63c74d;
+  --error: #e43b44;
+
   /* Text hierarchy */
-  --text-primary: #f0f0f5;
-  --text-secondary: #8888a0;
-  --text-muted: #505068;
-  
+  --text-primary: #ead4aa;
+  --text-secondary: #8b9bb4;
+  --text-muted: #5a6988;
+
   /* Borders */
-  --border-default: #1a1a28;
-  --border-hover: #2a2a40;
-  --border-accent: rgba(0, 255, 245, 0.3);
-  
+  --border-default: #3a4466;
+  --border-hover: #4a5580;
+  --border-accent: rgba(254, 174, 52, 0.35);
+
   /* Shadows */
-  --glow-sm: 0 0 10px var(--accent-glow);
-  --glow-md: 0 0 20px var(--accent-glow), 0 0 40px var(--accent-subtle);
-  --glow-lg: 0 0 30px var(--accent-glow), 0 0 60px var(--accent-subtle);
+  --shadow-sm: 0 2px 8px rgba(254, 174, 52, 0.12);
+  --shadow-md: 0 4px 16px rgba(254, 174, 52, 0.1);
+  --shadow-depth: 0 2px 0 #b86f50;
 }
 
 @theme inline {
   --color-background: var(--bg-primary);
   --color-foreground: var(--text-primary);
-  --font-sans: 'Space Mono', monospace;
-  --font-mono: 'Space Mono', monospace;
+  --font-sans: 'Silkscreen', sans-serif;
+  --font-mono: 'Silkscreen', sans-serif;
 }
 
 * {
@@ -53,23 +53,23 @@
 
 html {
   scroll-behavior: smooth;
+  background: var(--bg-void);
 }
 
 body {
   background: var(--bg-void);
   color: var(--text-primary);
-  font-family: 'Space Mono', monospace;
+  font-family: 'Silkscreen', sans-serif;
   min-height: 100vh;
   overflow-x: hidden;
   font-size: 14px;
   line-height: 1.6;
 }
 
-/* Animated pixel grid background */
+/* Pixel grid background */
 .bg-grid {
   position: relative;
-  background: 
-    linear-gradient(180deg, var(--bg-void) 0%, var(--bg-primary) 100%);
+  background: var(--bg-void);
 }
 
 .bg-grid::before {
@@ -79,7 +79,7 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  background-image: 
+  background-image:
     linear-gradient(var(--accent-subtle) 1px, transparent 1px),
     linear-gradient(90deg, var(--accent-subtle) 1px, transparent 1px);
   background-size: 40px 40px;
@@ -89,35 +89,9 @@ body {
   -webkit-mask-image: radial-gradient(ellipse 80% 50% at 50% 0%, black 40%, transparent 100%);
 }
 
-/* Scanline overlay */
-.scanlines {
-  position: relative;
-}
-
-.scanlines::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: repeating-linear-gradient(
-    0deg,
-    transparent,
-    transparent 2px,
-    rgba(0, 0, 0, 0.15) 2px,
-    rgba(0, 0, 0, 0.15) 4px
-  );
-  pointer-events: none;
-  z-index: 10;
-  border-radius: inherit;
-}
-
 /* Glass card effect */
 .glass-card {
   background: var(--bg-glass);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
   border: 1px solid var(--border-default);
   border-radius: 12px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -125,7 +99,7 @@ body {
 
 .glass-card:hover {
   border-color: var(--border-accent);
-  box-shadow: var(--glow-sm);
+  box-shadow: var(--shadow-sm);
 }
 
 /* Arcade button */
@@ -143,26 +117,17 @@ body {
   text-transform: uppercase;
   letter-spacing: 0.05em;
   font-size: 13px;
-}
-
-.btn-arcade::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 50%;
-  background: linear-gradient(180deg, rgba(255,255,255,0.2) 0%, transparent 100%);
-  pointer-events: none;
+  box-shadow: var(--shadow-depth);
 }
 
 .btn-arcade:hover {
   transform: translateY(-2px);
-  box-shadow: var(--glow-md);
+  box-shadow: var(--shadow-depth), var(--shadow-sm);
 }
 
 .btn-arcade:active {
-  transform: translateY(0);
+  transform: translateY(1px);
+  box-shadow: none;
 }
 
 .btn-arcade:disabled {
@@ -214,16 +179,14 @@ body {
   box-shadow: 0 0 0 3px var(--accent-subtle);
 }
 
-/* Accent text glow */
+/* Accent text */
 .text-accent {
   color: var(--accent);
 }
 
 .text-glow {
   color: var(--accent);
-  text-shadow: 
-    0 0 5px var(--accent-glow),
-    0 0 15px var(--accent-glow);
+  font-family: 'Press Start 2P', cursive;
 }
 
 /* Pixel art rendering */
@@ -274,25 +237,12 @@ body {
   to { opacity: 1; }
 }
 
-@keyframes pulse-glow {
-  0%, 100% {
-    box-shadow: 0 0 20px var(--accent-glow);
-  }
-  50% {
-    box-shadow: 0 0 40px var(--accent-glow), 0 0 60px var(--accent-subtle);
-  }
-}
-
 .animate-fade-up {
   animation: fadeUp 0.5s ease-out forwards;
 }
 
 .animate-fade-in {
   animation: fadeIn 0.4s ease-out forwards;
-}
-
-.animate-pulse-glow {
-  animation: pulse-glow 2s ease-in-out infinite;
 }
 
 /* Animation delays for stagger effect */
@@ -326,7 +276,7 @@ body {
 
 .pixel-step.active {
   background: var(--accent);
-  box-shadow: var(--glow-sm);
+  box-shadow: var(--shadow-sm);
 }
 
 .pixel-step.completed {
@@ -353,7 +303,7 @@ body {
 
 .frame-cell.selected {
   border-color: var(--accent);
-  box-shadow: var(--glow-sm);
+  box-shadow: var(--shadow-sm);
 }
 
 /* Upload zone */
@@ -412,10 +362,6 @@ body {
   border-radius: 12px;
   overflow: hidden;
   position: relative;
-}
-
-.game-preview.scanlines::after {
-  border-radius: 12px;
 }
 
 /* Keyboard hint */
