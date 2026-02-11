@@ -368,9 +368,76 @@ export default function PixiSandbox({ walkFrames, jumpFrames, attackFrames, idle
     };
   }, [walkFrames, gameLoop]);
 
+  // Touch control handlers
+  const handleTouchStart = (action: string) => (e: React.TouchEvent) => {
+    e.preventDefault();
+    if (action === "left" || action === "right") {
+      keysPressed.current.add(action);
+    } else if (action === "jump") {
+      const state = characterState.current;
+      if (!state.isJumping && !state.isAttacking) {
+        state.isJumping = true;
+        state.velocityY = JUMP_VELOCITY;
+        state.jumpFrameIndex = 0;
+      }
+    } else if (action === "attack") {
+      const state = characterState.current;
+      if (!state.isAttacking) {
+        state.isAttacking = true;
+        state.attackFrameIndex = 0;
+      }
+    }
+  };
+
+  const handleTouchEnd = (action: string) => (e: React.TouchEvent) => {
+    e.preventDefault();
+    if (action === "left" || action === "right") {
+      keysPressed.current.delete(action);
+    }
+  };
+
   return (
     <div className="pixi-sandbox-container">
       <div ref={containerRef} className="pixi-canvas-wrapper" />
+      {/* Mobile touch controls */}
+      <div className="flex sm:hidden items-center justify-between px-2 pt-3 pb-1 select-none">
+        <div className="flex gap-2">
+          <button
+            onTouchStart={handleTouchStart("left")}
+            onTouchEnd={handleTouchEnd("left")}
+            className="touch-btn"
+            aria-label="Move left"
+          >
+            ◄
+          </button>
+          <button
+            onTouchStart={handleTouchStart("right")}
+            onTouchEnd={handleTouchEnd("right")}
+            className="touch-btn"
+            aria-label="Move right"
+          >
+            ►
+          </button>
+        </div>
+        <div className="flex gap-2">
+          <button
+            onTouchStart={handleTouchStart("jump")}
+            onTouchEnd={handleTouchEnd("jump")}
+            className="touch-btn touch-btn-action"
+            aria-label="Jump"
+          >
+            ▲
+          </button>
+          <button
+            onTouchStart={handleTouchStart("attack")}
+            onTouchEnd={handleTouchEnd("attack")}
+            className="touch-btn touch-btn-attack"
+            aria-label="Attack"
+          >
+            ⚔
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

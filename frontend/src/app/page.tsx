@@ -105,7 +105,7 @@ function StepIndicator({ currentStep, maxCompletedStep, onStepClick }: {
   const steps = ["Character", "Sprites", "Preview", "Play"];
   
   return (
-    <div className="flex items-center justify-center gap-2 sm:gap-3 mb-8 sm:mb-12">
+    <div className="flex items-center justify-center gap-1 sm:gap-3 mb-6 sm:mb-12 px-2">
       {steps.map((label, idx) => {
         const stepNum = idx + 1;
         const isActive = currentStep === stepNum;
@@ -113,25 +113,25 @@ function StepIndicator({ currentStep, maxCompletedStep, onStepClick }: {
         const isClickable = isCompleted || stepNum <= maxCompletedStep + 1;
 
         return (
-          <div key={stepNum} className="flex items-center gap-2 sm:gap-3">
+          <div key={stepNum} className="flex items-center gap-1 sm:gap-3">
             <button
               onClick={() => isClickable && onStepClick(stepNum)}
               disabled={!isClickable}
-              className={`flex flex-col items-center gap-1.5 sm:gap-2 transition-all ${
+              className={`flex flex-col items-center gap-1 sm:gap-2 transition-all ${
                 isClickable ? 'cursor-pointer hover:scale-105' : 'cursor-not-allowed opacity-50'
               }`}
             >
               <div
                 className={`pixel-step ${isActive ? 'active' : ''} ${isCompleted ? 'completed' : ''}`}
               />
-              <span className={`text-[8px] sm:text-[10px] uppercase tracking-wider ${
+              <span className={`text-[7px] sm:text-[10px] uppercase tracking-normal sm:tracking-wider ${
                 isActive ? 'text-accent' : isCompleted ? 'text-[#63c74d]' : 'text-[#5a6988]'
               }`}>
                 {label}
               </span>
             </button>
             {idx < steps.length - 1 && (
-              <div className={`w-4 sm:w-8 h-[2px] ${
+              <div className={`hidden sm:block w-8 h-[2px] ${
                 isCompleted && idx < maxCompletedStep ? 'bg-[#63c74d]' : 'bg-[#3a4466]'
               }`} />
             )}
@@ -578,7 +578,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-grid relative">
+    <div className="min-h-screen bg-grid relative overflow-x-hidden">
       <Toast />
       
       {/* Edit Character Modal */}
@@ -602,28 +602,25 @@ export default function Home() {
       {/* Header */}
       <header className="sticky top-0 z-50 border-b border-[#3a4466] bg-[#181425]/90 backdrop-blur-md">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
             <img src="/logo.png" alt="PixelForge" className="w-7 h-7 sm:w-8 sm:h-8 pixel-art flex-shrink-0" />
-            <span className="text-xs sm:text-sm font-semibold tracking-wide">PIXELFORGE</span>
+            <span className="hidden sm:inline text-sm font-semibold tracking-wide">PIXELFORGE</span>
           </div>
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex items-center gap-1.5 sm:gap-3 flex-shrink-0">
             {store.maxCompletedStep >= 2 && (
               <button
                 onClick={exportAssets}
                 disabled={isExporting}
-                className="btn-ghost text-[10px] sm:text-xs flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 sm:py-3"
+                className="header-btn flex items-center gap-1"
               >
                 {isExporting ? (
-                  <>
-                    <span className="spinner w-3 h-3" />
-                    <span className="hidden sm:inline">Exporting...</span>
-                  </>
+                  <span className="spinner w-3 h-3" />
                 ) : (
-                  <>↓ <span className="hidden sm:inline">Export ZIP</span></>
+                  <>↓ <span className="hidden sm:inline">Export</span></>
                 )}
               </button>
             )}
-            <button onClick={store.reset} className="btn-ghost text-[10px] sm:text-xs px-2 sm:px-4 py-2 sm:py-3">
+            <button onClick={store.reset} className="header-btn">
               Reset
             </button>
           </div>
@@ -665,7 +662,7 @@ export default function Home() {
           <div className="max-w-xl mx-auto">
             <div className="text-center mb-6 sm:mb-10 animate-fade-up">
               <span className="badge mb-4">Step 1</span>
-              <h2 className="text-lg sm:text-2xl font-bold text-glow mb-3">
+              <h2 className="text-sm sm:text-2xl font-bold text-glow mb-3">
                 Create Your Character
               </h2>
               <p className="text-[#8b9bb4] text-xs sm:text-sm">
@@ -743,7 +740,7 @@ export default function Home() {
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-6 sm:mb-10 animate-fade-up">
               <span className="badge mb-4">Step 2</span>
-              <h2 className="text-lg sm:text-2xl font-bold text-glow mb-3">
+              <h2 className="text-sm sm:text-2xl font-bold text-glow mb-3">
                 Generate Animations
               </h2>
               <p className="text-[#8b9bb4] text-xs sm:text-sm">
@@ -836,8 +833,8 @@ export default function Home() {
               </div>
             )}
 
-            <div className="flex flex-wrap gap-3 sm:gap-4 animate-fade-up delay-3">
-              <button onClick={() => store.setStep(1)} className="btn-ghost text-xs sm:text-sm">
+            <div className="grid grid-cols-2 sm:flex gap-3 sm:gap-4 animate-fade-up delay-3">
+              <button onClick={() => store.setStep(1)} className="btn-ghost">
                 ← Back
               </button>
 
@@ -845,16 +842,16 @@ export default function Home() {
               <button
                 onClick={generateAllSprites}
                 disabled={anyGenerating}
-                className={`text-xs sm:text-sm ${allSpritesExist ? "btn-ghost" : "btn-arcade flex-1"}`}
+                className={allSpritesExist ? "btn-ghost" : "btn-arcade col-span-1"}
               >
-                {anyGenerating ? 'Generating...' : allSpritesExist ? '↻ Regenerate All' : 'Generate All Sprites'}
+                {anyGenerating ? 'Generating...' : allSpritesExist ? '↻ Regen All' : 'Generate All'}
               </button>
 
               {/* Show Next button only if all sprites exist */}
               {allSpritesExist && !anyGenerating && (
                 <button
                   onClick={proceedToPreview}
-                  className="btn-arcade flex-1 text-xs sm:text-sm"
+                  className="btn-arcade col-span-2 sm:flex-1"
                 >
                   Next →
                 </button>
@@ -868,7 +865,7 @@ export default function Home() {
           <div className="max-w-5xl mx-auto">
             <div className="text-center mb-6 sm:mb-10 animate-fade-up">
               <span className="badge mb-4">Step 3</span>
-              <h2 className="text-lg sm:text-2xl font-bold text-glow mb-3">
+              <h2 className="text-sm sm:text-2xl font-bold text-glow mb-3">
                 Preview & Adjust
               </h2>
               <p className="text-[#8b9bb4] text-xs sm:text-sm">
@@ -878,14 +875,14 @@ export default function Home() {
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 mb-8">
               {/* Animation preview - main focus */}
-              <div className="lg:col-span-2 glass-card p-4 sm:p-6 animate-fade-up delay-1">
-                <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
-                  <div className="flex gap-1.5 sm:gap-2 flex-wrap">
+              <div className="lg:col-span-2 glass-card p-3 sm:p-6 animate-fade-up delay-1">
+                <div className="flex items-center justify-between mb-3 sm:mb-4 gap-1.5">
+                  <div className="flex gap-1 sm:gap-2 min-w-0 overflow-x-auto">
                     {(["walk", "jump", "attack", "idle"] as SpriteType[]).map((type) => (
                       <button
                         key={type}
                         onClick={() => { setPreviewType(type); setPreviewFrame(0); setIsPlaying(true); }}
-                        className={`px-2 sm:px-3 py-1 sm:py-1.5 text-[10px] sm:text-xs uppercase tracking-wider rounded transition-all ${
+                        className={`px-1.5 sm:px-3 py-1 sm:py-1.5 text-[9px] sm:text-xs uppercase tracking-normal sm:tracking-wider rounded transition-all flex-shrink-0 ${
                           previewType === type
                             ? "bg-[#feae34] text-[#181425] font-semibold"
                             : "bg-[#2d2d44] text-[#8b9bb4] hover:text-[#ead4aa]"
@@ -897,13 +894,13 @@ export default function Home() {
                   </div>
                   <button
                     onClick={() => setIsPlaying(!isPlaying)}
-                    className={`px-3 sm:px-4 py-1 sm:py-1.5 text-[10px] sm:text-xs font-semibold rounded ${
+                    className={`px-2 sm:px-4 py-1 sm:py-1.5 text-[9px] sm:text-xs font-semibold rounded flex-shrink-0 ${
                       isPlaying
                         ? 'bg-[#e43b44] text-white'
                         : 'bg-[#feae34] text-[#181425]'
                     }`}
                   >
-                    {isPlaying ? "■ Stop" : "▶ Play"}
+                    {isPlaying ? "■" : "▶"}<span className="hidden sm:inline"> {isPlaying ? "Stop" : "Play"}</span>
                   </button>
                 </div>
 
@@ -992,12 +989,12 @@ export default function Home() {
             </div>
 
             <div className="flex gap-3 sm:gap-4 animate-fade-up delay-3">
-              <button onClick={() => store.setStep(2)} className="btn-ghost text-xs sm:text-sm">
+              <button onClick={() => store.setStep(2)} className="btn-ghost">
                 ← Sprites
               </button>
               <button
                 onClick={() => { store.setMaxCompletedStep(3); store.setStep(4); }}
-                className="btn-arcade flex-1 text-xs sm:text-sm"
+                className="btn-arcade flex-1"
               >
                 Launch Sandbox
               </button>
@@ -1010,15 +1007,18 @@ export default function Home() {
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-6 sm:mb-8 animate-fade-up">
               <span className="badge mb-4">Step 4</span>
-              <h2 className="text-lg sm:text-2xl font-bold text-glow mb-3">
+              <h2 className="text-sm sm:text-2xl font-bold text-glow mb-3">
                 Play Your Character
               </h2>
               <p className="text-[#8b9bb4] text-xs sm:text-sm">
-                <span className="kbd">A</span> <span className="kbd">D</span> Move
-                <span className="mx-1.5 sm:mx-3">·</span>
-                <span className="kbd">W</span> Jump
-                <span className="mx-1.5 sm:mx-3">·</span>
-                <span className="kbd">J</span> Attack
+                <span className="hidden sm:inline">
+                  <span className="kbd">A</span> <span className="kbd">D</span> Move
+                  <span className="mx-3">·</span>
+                  <span className="kbd">W</span> Jump
+                  <span className="mx-3">·</span>
+                  <span className="kbd">J</span> Attack
+                </span>
+                <span className="sm:hidden">Use the controls below to play</span>
               </p>
             </div>
 
@@ -1034,19 +1034,19 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="flex flex-wrap gap-3 sm:gap-4 animate-fade-up delay-2">
-              <button onClick={() => store.setStep(3)} className="btn-ghost text-xs sm:text-sm">
+            <div className="grid grid-cols-2 sm:flex gap-3 sm:gap-4 animate-fade-up delay-2">
+              <button onClick={() => store.setStep(3)} className="btn-ghost">
                 ← Preview
               </button>
               <button
                 onClick={exportAssets}
                 disabled={isExporting}
-                className="btn-ghost flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm"
+                className="btn-ghost flex items-center justify-center gap-1.5"
               >
                 {isExporting ? <span className="spinner w-3 h-3" /> : '↓'}
                 Export
               </button>
-              <button onClick={store.reset} className="btn-arcade flex-1 text-xs sm:text-sm">
+              <button onClick={store.reset} className="btn-arcade col-span-2 sm:flex-1">
                 New Character
               </button>
             </div>
