@@ -3,13 +3,29 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "PixelForge | AI-Powered Retro Game Creator",
-  description: "Create retro pixel games with AI. Describe your game idea and watch it come to life.",
-  keywords: ["pixel games", "retro games", "AI game generator", "game creator", "8-bit games"],
+  description: "Create retro pixel game characters with AI. Describe your hero, generate sprite sheets, preview animations, and export game-ready assets.",
+  keywords: ["pixel art", "sprite generator", "retro games", "AI game creator", "pixel character", "sprite sheet", "8-bit", "game assets"],
   authors: [{ name: "PixelForge" }],
+  metadataBase: new URL("https://pixelforge.app"),
   openGraph: {
-    title: "PixelForge | AI-Powered Retro Game Creator",
-    description: "Create retro pixel games with AI",
+    title: "PixelForge — AI Pixel Art Game Creator",
+    description: "Describe your hero. Get walk, jump, attack & idle sprite sheets. Play in a live sandbox. Export game-ready assets.",
     type: "website",
+    siteName: "PixelForge",
+    images: [
+      {
+        url: "/og-banner.png",
+        width: 1200,
+        height: 630,
+        alt: "PixelForge — Create retro pixel game characters with AI",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "PixelForge — AI Pixel Art Game Creator",
+    description: "Describe your hero. Get sprite sheets. Play in a sandbox. Export assets.",
+    images: ["/og-banner.png"],
   },
 };
 

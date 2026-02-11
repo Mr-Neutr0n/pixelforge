@@ -89,7 +89,7 @@ function Toast() {
   }[toast.type];
 
   return (
-    <div className={`fixed top-20 right-6 z-[100] ${bgColor} text-[#181425] px-4 py-3 rounded-lg shadow-lg flex items-center gap-3 animate-fade-up`}>
+    <div className={`fixed top-20 right-4 left-4 sm:left-auto sm:right-6 z-[100] ${bgColor} text-[#181425] px-4 py-3 rounded-lg shadow-lg flex items-center gap-3 animate-fade-up`}>
       <span className="text-sm font-medium">{toast.message}</span>
       <button onClick={clearToast} className="opacity-60 hover:opacity-100">✕</button>
     </div>
@@ -105,33 +105,33 @@ function StepIndicator({ currentStep, maxCompletedStep, onStepClick }: {
   const steps = ["Character", "Sprites", "Preview", "Play"];
   
   return (
-    <div className="flex items-center justify-center gap-3 mb-12">
+    <div className="flex items-center justify-center gap-2 sm:gap-3 mb-8 sm:mb-12">
       {steps.map((label, idx) => {
         const stepNum = idx + 1;
         const isActive = currentStep === stepNum;
         const isCompleted = stepNum <= maxCompletedStep;
         const isClickable = isCompleted || stepNum <= maxCompletedStep + 1;
-        
+
         return (
-          <div key={stepNum} className="flex items-center gap-3">
+          <div key={stepNum} className="flex items-center gap-2 sm:gap-3">
             <button
               onClick={() => isClickable && onStepClick(stepNum)}
               disabled={!isClickable}
-              className={`flex flex-col items-center gap-2 transition-all ${
+              className={`flex flex-col items-center gap-1.5 sm:gap-2 transition-all ${
                 isClickable ? 'cursor-pointer hover:scale-105' : 'cursor-not-allowed opacity-50'
               }`}
             >
               <div
                 className={`pixel-step ${isActive ? 'active' : ''} ${isCompleted ? 'completed' : ''}`}
               />
-              <span className={`text-[10px] uppercase tracking-wider ${
+              <span className={`text-[8px] sm:text-[10px] uppercase tracking-wider ${
                 isActive ? 'text-accent' : isCompleted ? 'text-[#63c74d]' : 'text-[#5a6988]'
               }`}>
                 {label}
               </span>
             </button>
             {idx < steps.length - 1 && (
-              <div className={`w-8 h-[2px] ${
+              <div className={`w-4 sm:w-8 h-[2px] ${
                 isCompleted && idx < maxCompletedStep ? 'bg-[#63c74d]' : 'bg-[#3a4466]'
               }`} />
             )}
@@ -601,31 +601,31 @@ export default function Home() {
       
       {/* Header */}
       <header className="sticky top-0 z-50 border-b border-[#3a4466] bg-[#181425]/90 backdrop-blur-md">
-        <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-[#feae34] flex items-center justify-center">
-              <span className="text-[#181425] text-sm font-bold" style={{ fontFamily: "'Press Start 2P', cursive", fontSize: '8px' }}>PF</span>
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <div className="w-7 h-7 sm:w-8 sm:h-8 bg-[#feae34] flex items-center justify-center flex-shrink-0">
+              <span className="text-[#181425] font-bold" style={{ fontFamily: "'Press Start 2P', cursive", fontSize: '7px' }}>PF</span>
             </div>
-            <span className="text-sm font-semibold tracking-wide">PIXELFORGE</span>
+            <span className="text-xs sm:text-sm font-semibold tracking-wide">PIXELFORGE</span>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             {store.maxCompletedStep >= 2 && (
               <button
                 onClick={exportAssets}
                 disabled={isExporting}
-                className="btn-ghost text-xs flex items-center gap-2"
+                className="btn-ghost text-[10px] sm:text-xs flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 sm:py-3"
               >
                 {isExporting ? (
                   <>
                     <span className="spinner w-3 h-3" />
-                    Exporting...
+                    <span className="hidden sm:inline">Exporting...</span>
                   </>
                 ) : (
-                  <>↓ Export ZIP</>
+                  <>↓ <span className="hidden sm:inline">Export ZIP</span></>
                 )}
               </button>
             )}
-            <button onClick={store.reset} className="btn-ghost text-xs">
+            <button onClick={store.reset} className="btn-ghost text-[10px] sm:text-xs px-2 sm:px-4 py-2 sm:py-3">
               Reset
             </button>
           </div>
@@ -633,7 +633,7 @@ export default function Home() {
       </header>
 
       {/* Main Content */}
-      <main className="relative z-10 max-w-5xl mx-auto px-6 py-12">
+      <main className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-12">
         <StepIndicator 
           currentStep={store.currentStep} 
           maxCompletedStep={store.maxCompletedStep}
@@ -665,13 +665,13 @@ export default function Home() {
         {/* Step 1: Generate Character */}
         {store.currentStep === 1 && (
           <div className="max-w-xl mx-auto">
-            <div className="text-center mb-10 animate-fade-up">
+            <div className="text-center mb-6 sm:mb-10 animate-fade-up">
               <span className="badge mb-4">Step 1</span>
-              <h2 className="text-2xl font-bold text-glow mb-3">
+              <h2 className="text-lg sm:text-2xl font-bold text-glow mb-3">
                 Create Your Character
               </h2>
-              <p className="text-[#8b9bb4] text-sm">
-                Describe your pixel hero or attach a reference image
+              <p className="text-[#8b9bb4] text-xs sm:text-sm">
+                Describe your pixel hero or attach a reference
               </p>
             </div>
 
@@ -682,7 +682,7 @@ export default function Home() {
                   <textarea
                     value={store.characterPrompt}
                     onChange={(e) => store.setCharacterPrompt(e.target.value)}
-                    placeholder="A brave robot warrior with glowing blue eyes and silver armor..."
+                    placeholder="A brave robot warrior with silver armor..."
                     className="input-arcade h-32 resize-none pr-16"
                   />
                   {/* Attachment button */}
@@ -743,17 +743,17 @@ export default function Home() {
         {/* Step 2: Generate Sprite Sheets */}
         {store.currentStep === 2 && (
           <div className="max-w-4xl mx-auto">
-            <div className="text-center mb-10 animate-fade-up">
+            <div className="text-center mb-6 sm:mb-10 animate-fade-up">
               <span className="badge mb-4">Step 2</span>
-              <h2 className="text-2xl font-bold text-glow mb-3">
+              <h2 className="text-lg sm:text-2xl font-bold text-glow mb-3">
                 Generate Animations
               </h2>
-              <p className="text-[#8b9bb4] text-sm">
-                Create walk, jump, attack, and idle sprite sheets
+              <p className="text-[#8b9bb4] text-xs sm:text-sm">
+                Create walk, jump, attack, and idle sprites
               </p>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-6 mb-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-6">
               {/* Character preview */}
               <div className="glass-card p-6 animate-fade-up delay-1 group">
                 <div className="flex items-center justify-between mb-4">
@@ -838,25 +838,25 @@ export default function Home() {
               </div>
             )}
 
-            <div className="flex gap-4 animate-fade-up delay-3">
-              <button onClick={() => store.setStep(1)} className="btn-ghost">
+            <div className="flex flex-wrap gap-3 sm:gap-4 animate-fade-up delay-3">
+              <button onClick={() => store.setStep(1)} className="btn-ghost text-xs sm:text-sm">
                 ← Back
               </button>
-              
+
               {/* Show Generate button - smaller if sprites exist */}
-              <button 
-                onClick={generateAllSprites} 
+              <button
+                onClick={generateAllSprites}
                 disabled={anyGenerating}
-                className={allSpritesExist ? "btn-ghost" : "btn-arcade flex-1"}
+                className={`text-xs sm:text-sm ${allSpritesExist ? "btn-ghost" : "btn-arcade flex-1"}`}
               >
                 {anyGenerating ? 'Generating...' : allSpritesExist ? '↻ Regenerate All' : 'Generate All Sprites'}
               </button>
-              
+
               {/* Show Next button only if all sprites exist */}
               {allSpritesExist && !anyGenerating && (
-                <button 
+                <button
                   onClick={proceedToPreview}
-                  className="btn-arcade flex-1"
+                  className="btn-arcade flex-1 text-xs sm:text-sm"
                 >
                   Next →
                 </button>
@@ -868,26 +868,26 @@ export default function Home() {
         {/* Step 3: Preview & Adjust (Merged) */}
         {store.currentStep === 3 && (
           <div className="max-w-5xl mx-auto">
-            <div className="text-center mb-10 animate-fade-up">
+            <div className="text-center mb-6 sm:mb-10 animate-fade-up">
               <span className="badge mb-4">Step 3</span>
-              <h2 className="text-2xl font-bold text-glow mb-3">
+              <h2 className="text-lg sm:text-2xl font-bold text-glow mb-3">
                 Preview & Adjust
               </h2>
-              <p className="text-[#8b9bb4] text-sm">
+              <p className="text-[#8b9bb4] text-xs sm:text-sm">
                 Test animations and fine-tune settings
               </p>
             </div>
 
-            <div className="grid lg:grid-cols-3 gap-6 mb-8">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 mb-8">
               {/* Animation preview - main focus */}
-              <div className="lg:col-span-2 glass-card p-6 animate-fade-up delay-1">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex gap-2">
+              <div className="lg:col-span-2 glass-card p-4 sm:p-6 animate-fade-up delay-1">
+                <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
+                  <div className="flex gap-1.5 sm:gap-2 flex-wrap">
                     {(["walk", "jump", "attack", "idle"] as SpriteType[]).map((type) => (
                       <button
                         key={type}
                         onClick={() => { setPreviewType(type); setPreviewFrame(0); setIsPlaying(true); }}
-                        className={`px-3 py-1.5 text-xs uppercase tracking-wider rounded transition-all ${
+                        className={`px-2 sm:px-3 py-1 sm:py-1.5 text-[10px] sm:text-xs uppercase tracking-wider rounded transition-all ${
                           previewType === type
                             ? "bg-[#feae34] text-[#181425] font-semibold"
                             : "bg-[#2d2d44] text-[#8b9bb4] hover:text-[#ead4aa]"
@@ -899,7 +899,7 @@ export default function Home() {
                   </div>
                   <button
                     onClick={() => setIsPlaying(!isPlaying)}
-                    className={`px-4 py-1.5 text-xs font-semibold rounded ${
+                    className={`px-3 sm:px-4 py-1 sm:py-1.5 text-[10px] sm:text-xs font-semibold rounded ${
                       isPlaying
                         ? 'bg-[#e43b44] text-white'
                         : 'bg-[#feae34] text-[#181425]'
@@ -993,13 +993,13 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="flex gap-4 animate-fade-up delay-3">
-              <button onClick={() => store.setStep(2)} className="btn-ghost">
+            <div className="flex gap-3 sm:gap-4 animate-fade-up delay-3">
+              <button onClick={() => store.setStep(2)} className="btn-ghost text-xs sm:text-sm">
                 ← Sprites
               </button>
-              <button 
-                onClick={() => { store.setMaxCompletedStep(3); store.setStep(4); }} 
-                className="btn-arcade flex-1"
+              <button
+                onClick={() => { store.setMaxCompletedStep(3); store.setStep(4); }}
+                className="btn-arcade flex-1 text-xs sm:text-sm"
               >
                 Launch Sandbox
               </button>
@@ -1010,16 +1010,16 @@ export default function Home() {
         {/* Step 4: Sandbox */}
         {store.currentStep === 4 && (
           <div className="max-w-4xl mx-auto">
-            <div className="text-center mb-8 animate-fade-up">
+            <div className="text-center mb-6 sm:mb-8 animate-fade-up">
               <span className="badge mb-4">Step 4</span>
-              <h2 className="text-2xl font-bold text-glow mb-3">
+              <h2 className="text-lg sm:text-2xl font-bold text-glow mb-3">
                 Play Your Character
               </h2>
-              <p className="text-[#8b9bb4] text-sm">
+              <p className="text-[#8b9bb4] text-xs sm:text-sm">
                 <span className="kbd">A</span> <span className="kbd">D</span> Move
-                <span className="mx-3">·</span>
+                <span className="mx-1.5 sm:mx-3">·</span>
                 <span className="kbd">W</span> Jump
-                <span className="mx-3">·</span>
+                <span className="mx-1.5 sm:mx-3">·</span>
                 <span className="kbd">J</span> Attack
               </p>
             </div>
@@ -1036,20 +1036,20 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="flex gap-4 animate-fade-up delay-2">
-              <button onClick={() => store.setStep(3)} className="btn-ghost">
+            <div className="flex flex-wrap gap-3 sm:gap-4 animate-fade-up delay-2">
+              <button onClick={() => store.setStep(3)} className="btn-ghost text-xs sm:text-sm">
                 ← Preview
               </button>
               <button
                 onClick={exportAssets}
                 disabled={isExporting}
-                className="btn-ghost flex items-center gap-2"
+                className="btn-ghost flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm"
               >
                 {isExporting ? <span className="spinner w-3 h-3" /> : '↓'}
-                Export ZIP
+                Export
               </button>
-              <button onClick={store.reset} className="btn-arcade flex-1">
-                Create Another Character
+              <button onClick={store.reset} className="btn-arcade flex-1 text-xs sm:text-sm">
+                New Character
               </button>
             </div>
           </div>
@@ -1057,8 +1057,8 @@ export default function Home() {
       </main>
 
       {/* Footer */}
-      <footer className="relative z-10 border-t border-[#3a4466] mt-20">
-        <div className="max-w-5xl mx-auto px-6 py-6 text-center">
+      <footer className="relative z-10 border-t border-[#3a4466] mt-12 sm:mt-20">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-4 sm:py-6 text-center">
           <p className="text-[#5a6988] text-xs">
             Powered by Gemini 3 Pro · Built with Next.js
           </p>
