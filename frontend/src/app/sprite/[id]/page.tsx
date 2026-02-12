@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useParams } from "next/navigation";
-import { fetchSprite } from "@/lib/api";
+import { fetchSprite, proxyUrl } from "@/lib/api";
 import { extractFramesFromSheet } from "@/lib/frames";
 import { Frame, SpriteType } from "@/types";
 import dynamic from "next/dynamic";
@@ -48,7 +48,7 @@ function AnimationPreview({
   const [currentFrame, setCurrentFrame] = useState(0);
 
   useEffect(() => {
-    extractFramesFromSheet(imageUrl, 2, 2).then(setFrames);
+    extractFramesFromSheet(proxyUrl(imageUrl), 2, 2).then(setFrames);
   }, [imageUrl]);
 
   useEffect(() => {
@@ -149,7 +149,7 @@ export default function SpriteDetailPage() {
         types.map(async (type) => {
           const sheet = sprite.spriteSheets[type];
           if (sheet?.url) {
-            const frames = await extractFramesFromSheet(sheet.url, 2, 2);
+            const frames = await extractFramesFromSheet(proxyUrl(sheet.url), 2, 2);
             setters[type](frames);
           }
         })

@@ -13,6 +13,7 @@ import { editSpriteSheet } from './routes/edit-sprite-sheet.js';
 import { saveSprite } from './routes/save-sprite.js';
 import { gallery } from './routes/gallery.js';
 import { getSprite } from './routes/sprite.js';
+import { proxyImage } from './routes/proxy-image.js';
 import { initDb } from './lib/db.js';
 
 const app = express();
@@ -118,6 +119,7 @@ app.post('/api/edit-sprite-sheet', rateLimitMiddleware, editSpriteSheet);
 app.post('/api/save-sprite', rateLimitMiddleware, saveSprite);
 app.get('/api/gallery', gallery);
 app.get('/api/sprite/:id', getSprite);
+app.get('/api/proxy-image', proxyImage);
 
 // Error handler
 app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {

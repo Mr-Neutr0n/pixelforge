@@ -5,6 +5,15 @@
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
+/**
+ * Convert a GCS signed URL to a proxied URL through our backend.
+ * Needed for canvas pixel access (CORS).
+ */
+export function proxyUrl(url: string): string {
+  if (!url || url.startsWith('data:')) return url;
+  return `${API_URL}/api/proxy-image?url=${encodeURIComponent(url)}`;
+}
+
 interface GeneratedImage {
   imageUrl: string;
   rawImageUrl?: string;
