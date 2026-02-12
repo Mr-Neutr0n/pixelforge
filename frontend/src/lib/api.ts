@@ -93,3 +93,43 @@ export async function editSpriteSheet(
     body: JSON.stringify({ imageUrl, editPrompt, type }),
   });
 }
+
+/**
+ * Save a sprite to the gallery
+ */
+export async function saveSprite(
+  prompt: string,
+  characterImage: string,
+  spriteSheets: Record<string, string>
+): Promise<{ id: string; shareUrl: string }> {
+  return apiFetch<{ id: string; shareUrl: string }>(`${API_URL}/api/save-sprite`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ prompt, characterImage, spriteSheets }),
+  });
+}
+
+/**
+ * Fetch gallery sprites (public, paginated)
+ */
+export async function fetchGallery(page: number = 1, limit: number = 20) {
+  return apiFetch<{
+    sprites: Array<{ id: string; prompt: string; characterImageUrl: string; createdAt: string }>;
+    total: number;
+    page: number;
+    totalPages: number;
+  }>(`${API_URL}/api/gallery?page=${page}&limit=${limit}`, { method: 'GET' });
+}
+
+/**
+ * Fetch a single sprite by ID (public)
+ */
+export async function fetchSprite(id: string) {
+  return apiFetch<{
+    id: string;
+    prompt: string;
+    characterImageUrl: string;
+    spriteSheets: Record<string, { url: string }>;
+    createdAt: string;
+  }>(`${API_URL}/api/sprite/${id}`, { method: 'GET' });
+}

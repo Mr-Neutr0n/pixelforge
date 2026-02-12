@@ -69,6 +69,11 @@ export const useStore = create<AppState>((set, get) => ({
   },
   clearToast: () => set({ toast: null }),
   
+  // Gallery
+  spriteId: null,
+  setSpriteId: (id: string | null) => set({ spriteId: id }),
+  get isLocked() { return get().spriteId !== null; },
+
   // View mode (raw vs transparent)
   showRawImages: false,
   setShowRawImages: (show: boolean) => set({ showRawImages: show }),
@@ -94,6 +99,7 @@ export const useStore = create<AppState>((set, get) => ({
     error: null,
     toast: null,
     showRawImages: false,
+    spriteId: null,
     fps: 8,
   }),
 }));

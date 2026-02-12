@@ -3,78 +3,12 @@
 import { useState, useRef, useEffect } from "react";
 import { useStore } from "@/store/useStore";
 import { Frame, SpriteType, BoundingBox } from "@/types";
+import { extractFramesFromSheet } from "@/lib/frames";
 import dynamic from "next/dynamic";
 import JSZip from "jszip";
 import * as api from "@/lib/api";
 
 const PixiSandbox = dynamic(() => import("@/components/PixiSandbox"), { ssr: false });
-
-// Frame extraction utility
-function extractFramesFromSheet(
-  imageUrl: string,
-  rows: number,
-  cols: number
-): Promise<Frame[]> {
-  return new Promise((resolve) => {
-    const img = new Image();
-    img.crossOrigin = "anonymous";
-    img.onload = () => {
-      const frameWidth = Math.floor(img.width / cols);
-      const frameHeight = Math.floor(img.height / rows);
-      const frames: Frame[] = [];
-      
-      for (let row = 0; row < rows; row++) {
-        for (let col = 0; col < cols; col++) {
-          const canvas = document.createElement("canvas");
-          canvas.width = frameWidth;
-          canvas.height = frameHeight;
-          const ctx = canvas.getContext("2d")!;
-          ctx.drawImage(
-            img,
-            col * frameWidth,
-            row * frameHeight,
-            frameWidth,
-            frameHeight,
-            0,
-            0,
-            frameWidth,
-            frameHeight
-          );
-          
-          const imageData = ctx.getImageData(0, 0, frameWidth, frameHeight);
-          const data = imageData.data;
-          let minX = frameWidth, minY = frameHeight, maxX = 0, maxY = 0;
-          
-          for (let y = 0; y < frameHeight; y++) {
-            for (let x = 0; x < frameWidth; x++) {
-              const idx = (y * frameWidth + x) * 4;
-              if (data[idx + 3] > 10) {
-                minX = Math.min(minX, x);
-                minY = Math.min(minY, y);
-                maxX = Math.max(maxX, x);
-                maxY = Math.max(maxY, y);
-              }
-            }
-          }
-          
-          const contentBounds: BoundingBox = minX <= maxX && minY <= maxY
-            ? { x: minX, y: minY, width: maxX - minX + 1, height: maxY - minY + 1 }
-            : { x: 0, y: 0, width: frameWidth, height: frameHeight };
-          
-          frames.push({
-            dataUrl: canvas.toDataURL("image/png"),
-            width: frameWidth,
-            height: frameHeight,
-            contentBounds,
-          });
-        }
-      }
-      resolve(frames);
-    };
-    img.onerror = () => resolve([]);
-    img.src = imageUrl;
-  });
-}
 
 // Toast component
 function Toast() {
@@ -204,20 +138,21 @@ function EditModal({
 }
 
 // Sprite card with regenerate and edit buttons
-function SpriteCard({ type, isGenerating, onRegenerate, onEdit }: {
+function SpriteCard({ type, isGenerating, onRegenerate, onEdit, isLocked }: {
   type: SpriteType;
   isGenerating: boolean;
   onRegenerate: () => void;
   onEdit: () => void;
+  isLocked?: boolean;
 }) {
   const { spriteSheets, showRawImages } = useStore();
   const sheet = spriteSheets[type];
-  
+
   return (
     <div className="glass-card p-4 relative group">
       <div className="flex items-center justify-between mb-2">
         <span className="text-[10px] uppercase tracking-wider text-[#5a6988]">{type}</span>
-        {sheet && !isGenerating && (
+        {sheet && !isGenerating && !isLocked && (
           <div className="opacity-0 group-hover:opacity-100 transition-opacity flex gap-2">
             <button
               onClick={onEdit}
@@ -261,6 +196,8 @@ function SpriteCard({ type, isGenerating, onRegenerate, onEdit }: {
 
 export default function Home() {
   const store = useStore();
+  const { spriteId } = store;
+  const isLocked = spriteId !== null;
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [previewType, setPreviewType] = useState<SpriteType>("walk");
@@ -577,6 +514,35 @@ export default function Home() {
     store.setStep(3);
   };
 
+  // Save sprite and launch sandbox
+  async function handleLaunchSandbox() {
+    const { characterPrompt, characterImage, spriteSheets, setSpriteId, showToast, setStep, setMaxCompletedStep } = useStore.getState();
+
+    // Save to gallery
+    if (characterImage && !useStore.getState().spriteId) {
+      try {
+        const result = await api.saveSprite(
+          characterPrompt,
+          characterImage.imageUrl,
+          {
+            walk: spriteSheets.walk?.imageUrl || '',
+            jump: spriteSheets.jump?.imageUrl || '',
+            attack: spriteSheets.attack?.imageUrl || '',
+            idle: spriteSheets.idle?.imageUrl || '',
+          }
+        );
+        setSpriteId(result.id);
+        showToast('Sprite saved to gallery!', 'success');
+      } catch (err) {
+        console.error('Failed to save sprite:', err);
+        showToast('Failed to save to gallery', 'error');
+      }
+    }
+
+    setStep(4);
+    setMaxCompletedStep(4);
+  }
+
   return (
     <div className="min-h-screen bg-grid relative overflow-x-hidden">
       <Toast />
@@ -620,9 +586,9 @@ export default function Home() {
                 )}
               </button>
             )}
-            <button onClick={store.reset} className="header-btn">
-              Reset
-            </button>
+            <a href="/gallery" className="text-xs tracking-wider uppercase opacity-60 hover:opacity-100 transition-opacity" style={{ fontFamily: 'var(--font-pixel)', color: 'var(--text-secondary)' }}>
+              Gallery
+            </a>
           </div>
         </div>
       </header>
@@ -757,7 +723,7 @@ export default function Home() {
                     <span className="text-xs uppercase tracking-wider text-[#8b9bb4]">Your Character</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    {store.characterImage && (
+                    {!isLocked && store.characterImage && (
                       <button
                         onClick={() => setIsEditingCharacter(true)}
                         className="opacity-0 group-hover:opacity-100 transition-opacity text-[10px] px-2 py-1 rounded bg-[#2d2d44] text-[#8b9bb4] hover:text-accent"
@@ -801,6 +767,7 @@ export default function Home() {
                     isGenerating={store.generatingSprites[type]}
                     onRegenerate={() => generateSingleSprite(type)}
                     onEdit={() => setEditingSpriteType(type)}
+                    isLocked={isLocked}
                   />
                 ))}
               </div>
@@ -838,14 +805,16 @@ export default function Home() {
                 ← Back
               </button>
 
-              {/* Show Generate button - smaller if sprites exist */}
-              <button
-                onClick={generateAllSprites}
-                disabled={anyGenerating}
-                className={allSpritesExist ? "btn-ghost" : "btn-arcade col-span-1"}
-              >
-                {anyGenerating ? 'Generating...' : allSpritesExist ? '↻ Regen All' : 'Generate All'}
-              </button>
+              {/* Show Generate button - smaller if sprites exist, hidden when locked */}
+              {!isLocked && (
+                <button
+                  onClick={generateAllSprites}
+                  disabled={anyGenerating}
+                  className={allSpritesExist ? "btn-ghost" : "btn-arcade col-span-1"}
+                >
+                  {anyGenerating ? 'Generating...' : allSpritesExist ? '↻ Regen All' : 'Generate All'}
+                </button>
+              )}
 
               {/* Show Next button only if all sprites exist */}
               {allSpritesExist && !anyGenerating && (
@@ -993,7 +962,7 @@ export default function Home() {
                 ← Sprites
               </button>
               <button
-                onClick={() => { store.setMaxCompletedStep(3); store.setStep(4); }}
+                onClick={handleLaunchSandbox}
                 className="btn-arcade flex-1"
               >
                 Launch Sandbox

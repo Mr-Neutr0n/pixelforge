@@ -10,6 +10,10 @@ import { generateCharacter } from './routes/generate-character.js';
 import { generateSpriteSheet } from './routes/generate-sprite-sheet.js';
 import { editCharacter } from './routes/edit-character.js';
 import { editSpriteSheet } from './routes/edit-sprite-sheet.js';
+import { saveSprite } from './routes/save-sprite.js';
+import { gallery } from './routes/gallery.js';
+import { getSprite } from './routes/sprite.js';
+import { initDb } from './lib/db.js';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -110,6 +114,11 @@ app.post('/api/generate-sprite-sheet', rateLimitMiddleware, generateSpriteSheet)
 app.post('/api/edit-character', rateLimitMiddleware, editCharacter);
 app.post('/api/edit-sprite-sheet', rateLimitMiddleware, editSpriteSheet);
 
+// Gallery routes (save is rate limited, read is public)
+app.post('/api/save-sprite', rateLimitMiddleware, saveSprite);
+app.get('/api/gallery', gallery);
+app.get('/api/sprite/:id', getSprite);
+
 // Error handler
 app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
   console.error('Unhandled error:', err);
@@ -117,10 +126,19 @@ app.use((err: Error, req: express.Request, res: express.Response, next: express.
 });
 
 // Start server
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
   console.log(`🎮 PixelForge API running on port ${PORT}`);
   console.log(`   Health check: http://localhost:${PORT}/health`);
   console.log(`   Rate limit: ${DAILY_LIMIT} generations/day`);
+
+  // Initialize database
+  if (process.env.DATABASE_URL) {
+    try {
+      await initDb();
+    } catch (err) {
+      console.error("Failed to initialize database:", err);
+    }
+  }
 });
 
 export default app;

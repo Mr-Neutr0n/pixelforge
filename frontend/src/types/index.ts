@@ -99,6 +99,11 @@ export interface AppState {
   showToast: (message: string, type?: 'success' | 'error' | 'info') => void;
   clearToast: () => void;
   
+  // Gallery
+  spriteId: string | null;
+  setSpriteId: (id: string | null) => void;
+  isLocked: boolean;
+
   // View mode
   showRawImages: boolean;
   setShowRawImages: (show: boolean) => void;
@@ -109,4 +114,19 @@ export interface AppState {
   
   // Reset
   reset: () => void;
+}
+
+export interface GallerySprite {
+  id: string;
+  prompt: string;
+  characterImageUrl: string;
+  createdAt: string;
+}
+
+export interface SpriteDetail {
+  id: string;
+  prompt: string;
+  characterImageUrl: string;
+  spriteSheets: Record<SpriteType, { url: string }>;
+  createdAt: string;
 }
