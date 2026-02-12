@@ -51,6 +51,25 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
       </head>
       <body className="antialiased bg-grid">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebApplication",
+              "name": "PixelForge",
+              "url": "https://pixelforge.harikp.com",
+              "description": "Create retro pixel game characters with AI. Describe your hero, generate sprite sheets, preview animations, and export game-ready assets.",
+              "applicationCategory": "GameApplication",
+              "operatingSystem": "Web",
+              "offers": {
+                "@type": "Offer",
+                "price": "0",
+                "priceCurrency": "USD"
+              }
+            }),
+          }}
+        />
         {children}
       </body>
     </html>
