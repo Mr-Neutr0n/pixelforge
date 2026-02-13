@@ -14,7 +14,7 @@ export const metadata: Metadata = {
     siteName: "PixelForge",
     images: [
       {
-        url: "/og-banner.jpg",
+        url: "https://pixelforge.harikp.com/og-banner.jpg",
         width: 1200,
         height: 630,
         alt: "PixelForge — Create retro pixel game characters with AI",
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "PixelForge — AI Pixel Art Game Creator",
     description: "Describe your hero. Get sprite sheets. Play in a sandbox. Export assets.",
-    images: ["/og-banner.jpg"],
+    images: ["https://pixelforge.harikp.com/og-banner.jpg"],
   },
 };
 

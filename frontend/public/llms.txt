@@ -1,0 +1,8 @@
+# PixelForge
+
+> AI-powered retro pixel game character creator. Describe a character, get sprite sheets, play in a live sandbox.
+
+## Pages
+- [Home](https://pixelforge.harikp.com): Create pixel game characters with AI
+- [Gallery](https://pixelforge.harikp.com/gallery): Browse community-created sprites
+- [Sprite Detail](https://pixelforge.harikp.com/sprite/{id}): Individual sprite with animated previews and playable sandbox
