@@ -1,12 +1,41 @@
 /**
  * API Client for PixelForge Backend
- * All Gemini/AI operations happen on the backend
+ * All AI operations happen on the backend
  */
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8104';
+const GENERATION_TOKEN_KEY = 'pixelforge-generation-token';
+let generationTokenPromise: Promise<string> | null = null;
+
+async function generationToken(): Promise<string> {
+  const stored = typeof window !== 'undefined' ? sessionStorage.getItem(GENERATION_TOKEN_KEY) : null;
+  if (stored) return stored;
+  generationTokenPromise ||= apiFetch<{ token: string }>(`${API_URL}/api/generation-sessions`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+  }).then(({ token }) => {
+    sessionStorage.setItem(GENERATION_TOKEN_KEY, token);
+    return token;
+  }).finally(() => {
+    generationTokenPromise = null;
+  });
+  return generationTokenPromise;
+}
+
+async function generationHeaders(): Promise<Record<string, string>> {
+  return {
+    'Content-Type': 'application/json',
+    'X-Generation-Token': await generationToken(),
+  };
+}
+
+export function resetGenerationProject(): void {
+  if (typeof window !== 'undefined') sessionStorage.removeItem(GENERATION_TOKEN_KEY);
+  generationTokenPromise = null;
+}
 
 /**
- * Convert a GCS signed URL to a proxied URL through our backend.
+ * Convert a private S3 signed URL to a same-origin API proxy URL.
  * Needed for canvas pixel access (CORS).
  */
 export function proxyUrl(url: string): string {
@@ -31,6 +60,7 @@ interface SpriteSheetResponse extends GeneratedImage {
 async function handleResponse<T>(response: Response): Promise<T> {
   if (!response.ok) {
     const data = await response.json().catch(() => ({}));
+    if (response.status === 401) resetGenerationProject();
     throw new Error(data.error || `Request failed with status ${response.status}`);
   }
   return response.json();
@@ -58,7 +88,7 @@ async function apiFetch<T>(url: string, options: RequestInit): Promise<T> {
 export async function generateCharacter(prompt?: string, imageUrl?: string): Promise<GeneratedImage> {
   return apiFetch<GeneratedImage>(`${API_URL}/api/generate-character`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: await generationHeaders(),
     body: JSON.stringify({ prompt, imageUrl }),
   });
 }
@@ -72,7 +102,7 @@ export async function generateSpriteSheet(
 ): Promise<SpriteSheetResponse> {
   return apiFetch<SpriteSheetResponse>(`${API_URL}/api/generate-sprite-sheet`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: await generationHeaders(),
     body: JSON.stringify({ characterImageUrl, type }),
   });
 }
@@ -83,7 +113,7 @@ export async function generateSpriteSheet(
 export async function editCharacter(imageUrl: string, editPrompt: string): Promise<GeneratedImage> {
   return apiFetch<GeneratedImage>(`${API_URL}/api/edit-character`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: await generationHeaders(),
     body: JSON.stringify({ imageUrl, editPrompt }),
   });
 }
@@ -98,7 +128,7 @@ export async function editSpriteSheet(
 ): Promise<SpriteSheetResponse> {
   return apiFetch<SpriteSheetResponse>(`${API_URL}/api/edit-sprite-sheet`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: await generationHeaders(),
     body: JSON.stringify({ imageUrl, editPrompt, type }),
   });
 }

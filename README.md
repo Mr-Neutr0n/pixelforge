@@ -24,7 +24,7 @@ PixelForge is a web platform where you can talk to an AI agent and create retro 
 
 - Node.js 18+
 - npm or yarn
-- Google Gemini API key
+- Azure OpenAI resource with a `gpt-image-2` deployment
 
 ### Installation
 
@@ -49,10 +49,12 @@ npm run dev
 Create a `.env.local` file:
 
 ```env
-GOOGLE_GENERATIVE_AI_API_KEY=your_gemini_api_key_here
+AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com
+AZURE_OPENAI_API_KEY=your_api_key_here
+AZURE_MODEL_IMAGE=gpt-image-2
 ```
 
-Get your API key at: https://aistudio.google.com/app/apikey
+Keep the Azure API key in the backend environment only. The production setup also requires PostgreSQL and private S3 storage as described in `DEPLOY.md`.
 
 ## 🎮 How to Use
 
@@ -113,7 +115,7 @@ PixelForge will integrate with **Nano Banana** for AI-generated pixel art assets
 | **Tailwind CSS** | Styling |
 | **KAPLAY** | 2D game engine (Kaboom.js successor) |
 | **Zustand** | State management |
-| **Google Gemini** | AI game generation |
+| **Azure OpenAI GPT Image** | Character and sprite generation |
 | **Vercel AI SDK** | AI integration |
 
 ## 📝 Roadmap

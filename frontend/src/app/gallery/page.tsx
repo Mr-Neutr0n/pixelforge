@@ -230,7 +230,7 @@ export default function GalleryPage() {
       <footer className="relative z-10 border-t border-[var(--border-default)] mt-12 sm:mt-20">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 sm:py-6 text-center">
           <p className="text-xs" style={{ color: "var(--text-muted)" }}>
-            Powered by Gemini 3 Pro · Built with Next.js
+            Powered by GPT Image · Built with Next.js
           </p>
         </div>
       </footer>

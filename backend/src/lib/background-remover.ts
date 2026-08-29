@@ -4,7 +4,7 @@
  */
 
 import Jimp from 'jimp';
-import { CHROMA_GREEN } from './gemini.js';
+import { CHROMA_GREEN } from './openai.js';
 
 /**
  * Calculate Euclidean distance between two RGB colors

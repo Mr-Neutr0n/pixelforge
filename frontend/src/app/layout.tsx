@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import GoogleAnalytics from "@/components/GoogleAnalytics";
 
 export const metadata: Metadata = {
   title: "PixelForge | AI-Powered Retro Game Creator",
@@ -51,6 +52,7 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
       </head>
       <body className="antialiased bg-grid">
+        <GoogleAnalytics measurementId="G-NYHGZ1T3FJ" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{

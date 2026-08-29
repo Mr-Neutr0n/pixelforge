@@ -1,10 +1,10 @@
 /**
  * Edit Sprite Sheet Route
- * Takes existing sprite sheet + edit prompt and modifies it via Gemini
+ * Edits an existing sprite sheet with Azure OpenAI gpt-image-2
  */
 
 import { Request, Response } from 'express';
-import { generateImage, base64ToDataUrl, CHROMA_GREEN } from '../lib/gemini.js';
+import { generateImage, base64ToDataUrl, CHROMA_GREEN } from '../lib/openai.js';
 import { removeGreenBackground } from '../lib/background-remover.js';
 
 type SpriteType = "walk" | "jump" | "attack" | "idle";

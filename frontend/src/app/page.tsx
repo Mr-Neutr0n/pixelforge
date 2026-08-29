@@ -7,6 +7,7 @@ import { extractFramesFromSheet } from "@/lib/frames";
 import dynamic from "next/dynamic";
 import JSZip from "jszip";
 import * as api from "@/lib/api";
+import { trackEvent } from "@/lib/analytics";
 
 const PixiSandbox = dynamic(() => import("@/components/PixiSandbox"), { ssr: false });
 
@@ -101,7 +102,7 @@ function EditModal({
         <div className="glass-card p-8 w-full max-w-md animate-fade-up text-center">
           <div className="spinner mx-auto mb-4" />
           <h3 className="text-lg font-bold text-accent mb-2">Applying Edit...</h3>
-          <p className="text-[#8b9bb4] text-sm">Gemini is processing your changes</p>
+          <p className="text-[#8b9bb4] text-sm">GPT Image is processing your changes</p>
           <p className="text-[#5a6988] text-xs mt-2">This may take 15-30 seconds</p>
         </div>
       </div>
@@ -240,7 +241,10 @@ export default function Home() {
     store.setLoading(true);
     store.setLoadingMessage("Generating character...");
     store.clearError();
-    
+    trackEvent("character_generation_started", {
+      source: uploadedImage ? "upload" : "prompt",
+    });
+
     try {
       const data = await api.generateCharacter(store.characterPrompt || undefined, uploadedImage || undefined);
       
@@ -253,10 +257,16 @@ export default function Home() {
       store.setMaxCompletedStep(1);
       store.setStep(2);
       store.showToast("Character generated!", "success");
+      trackEvent("character_generation_completed", {
+        source: uploadedImage ? "upload" : "prompt",
+      });
     } catch (error) {
       const message = error instanceof Error ? error.message : "Failed to generate character";
       store.setError(message);
       store.showToast(message, "error");
+      trackEvent("character_generation_failed", {
+        source: uploadedImage ? "upload" : "prompt",
+      });
     } finally {
       store.setLoading(false);
       store.setLoadingMessage("");
@@ -324,9 +334,10 @@ export default function Home() {
   // Generate single sprite sheet (for individual regeneration)
   const generateSingleSprite = async (type: SpriteType) => {
     if (!store.characterImage) return;
-    
+
     store.setGeneratingSprite(type, true);
-    
+    trackEvent("sprite_generation_started", { animation_type: type });
+
     try {
       const data = await api.generateSpriteSheet(store.characterImage.imageUrl, type);
       
@@ -342,9 +353,11 @@ export default function Home() {
       store.setFrames(type, frames);
       
       store.showToast(`${type} sprite generated!`, "success");
+      trackEvent("sprite_generation_completed", { animation_type: type });
     } catch (error) {
       const message = error instanceof Error ? error.message : `Failed to generate ${type}`;
       store.showToast(message, "error");
+      trackEvent("sprite_generation_failed", { animation_type: type });
     } finally {
       store.setGeneratingSprite(type, false);
     }
@@ -358,7 +371,8 @@ export default function Home() {
     store.setLoadingMessage("Generating all animations in parallel...");
     
     const types: SpriteType[] = ["walk", "jump", "attack", "idle"];
-    
+    trackEvent("sprite_pack_generation_started");
+
     // Set all as generating
     types.forEach(type => store.setGeneratingSprite(type, true));
     
@@ -410,6 +424,10 @@ export default function Home() {
       store.showToast("Failed to generate sprites. Please retry.", "error");
     }
     
+    trackEvent("sprite_pack_generation_completed", {
+      generated_count: 4 - failures.length,
+      failed_count: failures.length,
+    });
     store.setLoading(false);
     store.setLoadingMessage("");
   };
@@ -454,6 +472,7 @@ export default function Home() {
       URL.revokeObjectURL(url);
       
       store.showToast("Assets exported!", "success");
+      trackEvent("sprite_assets_exported");
     } catch (error) {
       store.showToast("Failed to export assets", "error");
     } finally {
@@ -533,6 +552,7 @@ export default function Home() {
         );
         setSpriteId(result.id);
         showToast('Sprite saved to gallery!', 'success');
+        trackEvent("sprite_saved_to_gallery");
       } catch (err) {
         console.error('Failed to save sprite:', err);
         showToast('Failed to save to gallery', 'error');
@@ -541,6 +561,7 @@ export default function Home() {
 
     setStep(4);
     setMaxCompletedStep(4);
+    trackEvent("sandbox_started");
   }
 
   return (
@@ -1015,7 +1036,7 @@ export default function Home() {
                 {isExporting ? <span className="spinner w-3 h-3" /> : '↓'}
                 Export
               </button>
-              <button onClick={store.reset} className="btn-arcade col-span-2 sm:flex-1">
+              <button onClick={() => { api.resetGenerationProject(); store.reset(); }} className="btn-arcade col-span-2 sm:flex-1">
                 New Character
               </button>
             </div>
@@ -1027,7 +1048,7 @@ export default function Home() {
       <footer className="relative z-10 border-t border-[#3a4466] mt-12 sm:mt-20">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 py-4 sm:py-6 text-center">
           <p className="text-[#5a6988] text-xs">
-            Powered by Gemini 3 Pro · Built with Next.js
+            Powered by GPT Image · Built with Next.js
           </p>
         </div>
       </footer>

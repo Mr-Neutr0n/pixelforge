@@ -1,10 +1,10 @@
 /**
  * Generate Character Route
- * Uses Gemini 3 Pro Image with green screen + our background remover
+ * Uses Azure OpenAI gpt-image-2 with green screen and background removal
  */
 
 import { Request, Response } from 'express';
-import { generateImage, base64ToDataUrl, CHROMA_GREEN } from '../lib/gemini.js';
+import { generateImage, base64ToDataUrl, CHROMA_GREEN } from '../lib/openai.js';
 import { removeGreenBackground } from '../lib/background-remover.js';
 
 const CHARACTER_STYLE_PROMPT = `Generate a single character only, centered in the frame.

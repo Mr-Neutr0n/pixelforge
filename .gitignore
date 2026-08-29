@@ -49,3 +49,4 @@ sprite-pipeline/venv/
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+.skills-data/

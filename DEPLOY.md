@@ -1,117 +1,92 @@
-# PixelForge Deployment Guide
+# PixelForge deployment
 
-This project is split into two deployable components:
+The frontend remains on Vercel at `https://pixelforge.harikp.com`. The Node API runs on the shared Ubuntu ARM64 EC2 host at `127.0.0.1:8104`. Nginx terminates TLS for `https://api.pixelforge.harikp.com`. PostgreSQL runs locally. Final images use the shared private S3 bucket under `pixelforge/assets/`.
 
-```
-pixelforge/
-├── backend/    → Deploy to Railway
-├── frontend/   → Deploy to Vercel
-```
+Production temporarily runs in the AWS Organizations management account because the intended member accounts are not active. Track migration of EC2, Elastic IP, EBS, IAM, S3 objects, backups, alarms, and DNS as architecture debt. Do not add PixelForge to the existing MakeACard instance.
 
----
+## External resources
 
-## 1. Deploy Backend to Railway
+- Shared `t4g.medium` EC2 in `ap-south-1` with encrypted gp3 storage and an Elastic IP.
+- Security group with public TCP 80 and 443. Restrict TCP 22 to the operator address. Keep 5432 and 8104 private.
+- Shared private S3 bucket. The instance role may read and write `pixelforge/assets/*` and write PostgreSQL backups under its backup prefixes.
+- Azure OpenAI resource with a deployed `gpt-image-2` model.
+- GoDaddy A record for `api.pixelforge.harikp.com` after direct readiness checks pass.
 
-### Step 1: Create Railway Project
-1. Go to [railway.app](https://railway.app)
-2. Click "New Project" → "Deploy from GitHub repo"
-3. Select your repo and set **Root Directory** to `backend`
+## Database
 
-### Step 2: Add Environment Variables
-In Railway dashboard → Variables:
+Create a dedicated role and database. Keep PostgreSQL on localhost.
 
-```
-GOOGLE_GENERATIVE_AI_API_KEY=your_gemini_api_key
-FRONTEND_URL=https://your-frontend.vercel.app
-PORT=3001
-```
-
-### Step 3: Deploy
-Railway will auto-deploy using the Dockerfile. Note your backend URL:
-```
-https://your-app-name.railway.app
+```sql
+CREATE ROLE pixelforge LOGIN;
+\password pixelforge
+CREATE DATABASE pixelforge OWNER pixelforge;
+REVOKE CONNECT ON DATABASE pixelforge FROM PUBLIC;
+GRANT CONNECT ON DATABASE pixelforge TO pixelforge;
+\connect pixelforge
+REVOKE ALL ON SCHEMA public FROM PUBLIC;
+GRANT ALL ON SCHEMA public TO pixelforge;
 ```
 
----
+The API creates the current schema at startup. Future schema changes need ordered migrations before production data exists.
 
-## 2. Deploy Frontend to Vercel
+## Environment
 
-### Step 1: Import to Vercel
-1. Go to [vercel.com](https://vercel.com)
-2. Click "Add New" → "Project" → Import from GitHub
-3. Select your repo
-4. Set **Root Directory** to `frontend`
+Install `backend/env.example` as `/etc/pixelforge/pixelforge.env`, owned by `root:pixelforge` with mode `0640`. Replace every placeholder. Use the EC2 instance role for S3. Do not place AWS access keys in the environment.
 
-### Step 2: Add Environment Variables
-In Vercel dashboard → Settings → Environment Variables:
+`IP_HASH_PEPPER` must be a new random value. Changing it resets the identity used for per-IP daily quota. `ALLOWED_IMAGE_HOSTS` must list only the exact S3 hostname used for saved PixelForge images.
 
-```
-NEXT_PUBLIC_API_URL=https://your-backend.railway.app
-```
+## Release
 
-### Step 3: Deploy
-Vercel will auto-build and deploy. Your frontend URL:
-```
-https://your-app-name.vercel.app
-```
+Build each reviewed commit in an immutable release directory:
 
----
-
-## 3. Update CORS
-
-After both are deployed, update Railway with the Vercel URL:
-
-```
-FRONTEND_URL=https://your-app-name.vercel.app
-```
-
----
-
-## Local Development
-
-### Backend
 ```bash
-cd backend
-npm install
-cp env.example .env
-# Add your GOOGLE_GENERATIVE_AI_API_KEY to .env
-npm run dev
+RELEASE_ID="$(date -u +%Y%m%dT%H%M%SZ)-$(git rev-parse --short HEAD)"
+RELEASE_DIR="/opt/sideprojects/pixelforge/releases/$RELEASE_ID"
+sudo install -d -o root -g pixelforge -m 0750 "$RELEASE_DIR"
+sudo git archive HEAD | sudo tar -x -C "$RELEASE_DIR"
+cd "$RELEASE_DIR/backend"
+sudo npm ci --omit=dev
+sudo npm run build
+sudo chown -R root:pixelforge "$RELEASE_DIR"
+sudo chmod -R u=rwX,g=rX,o= "$RELEASE_DIR"
+sudo ln -s "$RELEASE_DIR" "/opt/sideprojects/pixelforge/.current-$RELEASE_ID"
+sudo mv -Tf "/opt/sideprojects/pixelforge/.current-$RELEASE_ID" /opt/sideprojects/pixelforge/current
+sudo systemctl restart pixelforge
 ```
-Backend runs at http://localhost:3001
 
-### Frontend
+Install the tracked systemd and Nginx files on the first release. Certbot edits the installed Nginx file, so routine releases must not overwrite it.
+
+## Verification
+
 ```bash
-cd frontend
-npm install
-npm run dev
-```
-Frontend runs at http://localhost:3000
-It will automatically use http://localhost:3001 as the API URL in dev.
-
----
-
-## Architecture
-
-```
-┌─────────────────┐     HTTPS      ┌─────────────────┐
-│                 │───────────────▶│                 │
-│   Vercel        │                │   Railway       │
-│   (Frontend)    │                │   (Backend)     │
-│                 │◀───────────────│                 │
-│   Next.js       │     JSON       │   Express       │
-│   React         │                │   Gemini API    │
-│   Tailwind      │                │   Jimp          │
-│                 │                │                 │
-└─────────────────┘                └─────────────────┘
-        │                                  │
-        │                                  │
-        ▼                                  ▼
-   Static Assets              Gemini 3 Pro Image API
-   (no secrets)                    (with API key)
+curl -fsS http://127.0.0.1:8104/health
+curl -fsS http://127.0.0.1:8104/ready
+curl -fsS http://127.0.0.1:8104/api/rate-limit
+sudo journalctl -u pixelforge -n 200 --no-pager
 ```
 
-## Security
+Verify the quota against PostgreSQL before DNS cutover:
 
-- **API Key** is only on Railway (backend), never exposed to browser
-- **CORS** restricts backend access to your Vercel domain
-- **No secrets** in frontend code or environment
+- A client can start two sprite projects in one UTC day.
+- A third project from the same client returns HTTP 429.
+- Existing project tokens survive an API restart.
+- A token works only from the address that created it.
+- A project stops after ten Azure image calls.
+- The global counter cannot exceed 100 under concurrent requests.
+
+Then test one complete project, gallery save, S3 read, share page, and ZIP export.
+
+## TLS and cutover
+
+After the API works through Nginx and DNS points at the Elastic IP:
+
+```bash
+sudo certbot --nginx -d api.pixelforge.harikp.com --redirect
+curl -fsS https://api.pixelforge.harikp.com/ready
+```
+
+Set Vercel `NEXT_PUBLIC_API_URL=https://api.pixelforge.harikp.com`, deploy, and repeat the complete browser flow.
+
+## Backup and rollback
+
+Include the `pixelforge` database in the host's nightly custom-format PostgreSQL dumps to S3. Test a disposable restore monthly. Keep at least two application releases. Roll back by switching `/opt/sideprojects/pixelforge/current`, restarting the unit, and checking `/ready`. Database changes must remain compatible with rollback-eligible releases.

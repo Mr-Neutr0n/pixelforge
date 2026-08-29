@@ -1,10 +1,10 @@
 /**
  * Generate Sprite Sheet Route
- * Creates walk/jump/attack/idle animations using Gemini 3 Pro Image
+ * Creates walk, jump, attack, and idle animations with Azure OpenAI gpt-image-2
  */
 
 import { Request, Response } from 'express';
-import { generateImage, base64ToDataUrl, CHROMA_GREEN } from '../lib/gemini.js';
+import { generateImage, base64ToDataUrl, CHROMA_GREEN } from '../lib/openai.js';
 import { removeGreenBackground } from '../lib/background-remover.js';
 
 const WALK_SPRITE_PROMPT = `Create a 4-frame pixel art walk cycle sprite sheet of this character.

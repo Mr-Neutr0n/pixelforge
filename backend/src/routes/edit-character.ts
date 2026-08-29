@@ -1,10 +1,10 @@
 /**
  * Edit Character Route
- * Takes existing character + edit prompt and modifies it via Gemini
+ * Edits an existing character with Azure OpenAI gpt-image-2
  */
 
 import { Request, Response } from 'express';
-import { generateImage, base64ToDataUrl, CHROMA_GREEN } from '../lib/gemini.js';
+import { generateImage, base64ToDataUrl, CHROMA_GREEN } from '../lib/openai.js';
 import { removeGreenBackground } from '../lib/background-remover.js';
 
 const EDIT_PROMPT_TEMPLATE = `Edit this pixel art character based on the following instructions:

@@ -1,4 +1,4 @@
-FROM node:20-alpine
+FROM node:22-alpine
 
 WORKDIR /app
 
@@ -17,7 +17,7 @@ RUN npm run build
 RUN npm prune --production
 
 # Expose port
-EXPOSE 3001
+EXPOSE 8104
 
 # Start server
 CMD ["node", "dist/index.js"]
