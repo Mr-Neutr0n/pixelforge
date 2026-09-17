@@ -2,7 +2,7 @@
 
 The frontend remains on Vercel at `https://pixelforge.harikp.com`. The Node API runs on the shared Ubuntu ARM64 EC2 host at `127.0.0.1:8104`. Nginx terminates TLS for `https://api.pixelforge.harikp.com`. PostgreSQL runs locally. Final images use the shared private S3 bucket under `pixelforge/assets/`.
 
-Production temporarily runs in the AWS Organizations management account because the intended member accounts are not active. Track migration of EC2, Elastic IP, EBS, IAM, S3 objects, backups, alarms, and DNS as architecture debt. Do not add PixelForge to the existing MakeACard instance.
+Migrated 2026-09-17 to the `Hari Personal` member account `514903006142`: EC2 host, Elastic IP (unchanged), EBS, IAM role, S3 objects, backups, alarms, and SSM parameters. The S3 bucket is `hari-sideprojects-prod-514903006142-ap-south-1`.
 
 ## External resources
 
