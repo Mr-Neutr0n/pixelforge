@@ -6,7 +6,7 @@ Migrated 2026-09-17 to the `Hari Personal` member account `514903006142`: EC2 ho
 
 ## External resources
 
-- Shared `t4g.medium` EC2 in `ap-south-1` with encrypted gp3 storage and an Elastic IP.
+- Shared `m6g.medium` EC2 in `ap-south-1` with encrypted gp3 storage and an Elastic IP (resized from `t4g.medium` at the 2026-09-17 account migration; t4g capacity was unavailable).
 - Security group with public TCP 80 and 443. Restrict TCP 22 to the operator address. Keep 5432 and 8104 private.
 - Shared private S3 bucket. The instance role may read and write `pixelforge/assets/*` and write PostgreSQL backups under its backup prefixes.
 - Azure OpenAI resource with a deployed `gpt-image-2` model.
