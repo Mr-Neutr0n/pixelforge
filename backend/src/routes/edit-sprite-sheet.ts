@@ -1,6 +1,6 @@
 /**
  * Edit Sprite Sheet Route
- * Edits an existing sprite sheet with Azure OpenAI gpt-image-2
+ * Edits an existing sprite sheet with Azure OpenAI gpt-image-2.5-flare
  */
 
 import { Request, Response } from 'express';

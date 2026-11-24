@@ -1,6 +1,6 @@
 /**
  * Generate Sprite Sheet Route
- * Creates walk, jump, attack, and idle animations with Azure OpenAI gpt-image-2
+ * Creates walk, jump, attack, and idle animations with Azure OpenAI gpt-image-2.5-flare
  */
 
 import { Request, Response } from 'express';

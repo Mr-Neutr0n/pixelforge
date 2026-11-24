@@ -1,6 +1,6 @@
 /**
  * Generate Character Route
- * Uses Azure OpenAI gpt-image-2 with green screen and background removal
+ * Uses Azure OpenAI gpt-image-2.5-flare with green screen and background removal
  */
 
 import { Request, Response } from 'express';

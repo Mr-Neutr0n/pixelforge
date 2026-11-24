@@ -9,10 +9,10 @@ function imageResponse(): Response {
   });
 }
 
-test("text generation uses the Azure gpt-image-2 generation route", async () => {
+test("text generation uses the Azure gpt-image-2.5-flare generation route", async () => {
   process.env.AZURE_OPENAI_ENDPOINT = "https://example.openai.azure.com";
   process.env.AZURE_OPENAI_API_KEY = "secret";
-  process.env.AZURE_MODEL_IMAGE = "gpt-image-2";
+  process.env.AZURE_MODEL_IMAGE = "gpt-image-2.5-flare";
   let requestUrl = "";
   let request: RequestInit | undefined;
   const originalFetch = globalThis.fetch;
@@ -27,7 +27,7 @@ test("text generation uses the Azure gpt-image-2 generation route", async () => 
     assert.equal(requestUrl, "https://example.openai.azure.com/openai/v1/images/generations?api-version=preview");
     assert.equal(new Headers(request?.headers).get("api-key"), "secret");
     const payload = JSON.parse(String(request?.body));
-    assert.equal(payload.model, "gpt-image-2");
+    assert.equal(payload.model, "gpt-image-2.5-flare");
     assert.equal(payload.size, "1024x1024");
   } finally {
     globalThis.fetch = originalFetch;
@@ -54,7 +54,7 @@ test("reference generation uses multipart image edits", async () => {
     assert.equal(requestUrl, "https://example.openai.azure.com/openai/v1/images/edits?api-version=preview");
     assert.ok(request?.body instanceof FormData);
     const form = request.body as FormData;
-    assert.equal(form.get("model"), "gpt-image-2");
+    assert.equal(form.get("model"), "gpt-image-2.5-flare");
     assert.equal(form.get("size"), "1536x1024");
     assert.ok(form.get("image") instanceof Blob);
   } finally {

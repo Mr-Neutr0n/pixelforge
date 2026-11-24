@@ -36,7 +36,7 @@ function apiKey(): string {
 }
 
 function model(): string {
-  return process.env.AZURE_MODEL_IMAGE?.trim() || "gpt-image-2";
+  return process.env.AZURE_MODEL_IMAGE?.trim() || "gpt-image-2.5-flare";
 }
 
 function imageSize(aspectRatio?: string): string {

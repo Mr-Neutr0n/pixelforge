@@ -1,6 +1,6 @@
 /**
  * Edit Character Route
- * Edits an existing character with Azure OpenAI gpt-image-2
+ * Edits an existing character with Azure OpenAI gpt-image-2.5-flare
  */
 
 import { Request, Response } from 'express';

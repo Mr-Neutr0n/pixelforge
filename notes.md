@@ -4,7 +4,7 @@
 
 - Frontend: Vercel at `https://pixelforge.harikp.com`
 - API: shared EC2 at `https://api.pixelforge.harikp.com`
-- Image model: Azure OpenAI `gpt-image-2`
+- Image model: Azure OpenAI `gpt-image-2.5-flare`
 - Database: local PostgreSQL with a dedicated database and role
 - Object storage: the shared private S3 bucket under `pixelforge/assets/`
 
